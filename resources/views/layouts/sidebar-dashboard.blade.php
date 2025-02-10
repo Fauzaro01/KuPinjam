@@ -3,7 +3,8 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="{{route('home')}}"><img style="width:120px; height:120px;user-select:none;" src="/assets/static/images/logo/kupinjam.webp" alt="Logo" srcset="" /></a>
+                    <a href="{{route('home')}}"><img style="width:120px; height:120px;user-select:none;"
+                            src="/assets/static/images/logo/kupinjam.webp" alt="Logo" srcset="" /></a>
                 </div>
                 <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -113,9 +114,27 @@
                         </li>
                     </ul>
                 </li>
-                <li class="sidebar-title">Raise Support</li>
+                <li class="sidebar-item has-sub">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Pengelola Pengguna</span>
+                    </a>
+                    <ul class="submenu">
+                        <li class="submenu-item">
+                            <a href="{{route('usermanagement.index')}}" class="submenu-link">Daftar Pengguna</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{{route('usermanagement.create')}}" class="submenu-link">Registrasi Pengguna</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{{route('usermanagement.bulkcreate')}}" class="submenu-link">Registrasi Pengguna
+                                Masal</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-title">Setelan</li>
                 <li class="sidebar-item">
-                    <a href="https://zuramai.github.io" class="sidebar-link">
+                    <a type="button" data-bs-toggle="modal" data-bs-target="#default" class="sidebar-link">
                         <i class="bi bi-life-preserver"></i>
                         <span>Developer</span>
                     </a>
@@ -135,6 +154,80 @@
                     </form>
                 </li>
             </ul>
+        </div>
+    </div>
+</div>
+<div class="modal fade text-left" id="default" tabindex="-1" aria-labelledby="myModalLabel1" style="display: none;"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel1">Pengembang KuPinjam</h5>
+                <button type="button" class="close rounded-pill" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-x">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-center align-items-center flex-column">
+                                    <div class="avatar avatar-2xl">
+                                        <img src="/assets/compiled/jpg/2.jpg" alt="Avatar">
+                                    </div>
+
+                                    <h3 class="mt-3">John Doe</h3>
+                                    <p class="text-small">Junior Software Engineer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-center align-items-center flex-column">
+                                    <div class="avatar avatar-2xl">
+                                        <img src="/assets/compiled/jpg/2.jpg" alt="Avatar">
+                                    </div>
+
+                                    <h3 class="mt-3">John Doe</h3>
+                                    <p class="text-small">Junior Software Engineer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-center align-items-center flex-column">
+                                    <div class="avatar avatar-2xl">
+                                        <img src="/assets/compiled/jpg/2.jpg" alt="Avatar">
+                                    </div>
+
+                                    <h3 class="mt-3">John Doe</h3>
+                                    <p class="text-small">Junior Software Engineer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-bs-dismiss="modal">
+                    <i class="bx bx-x d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Close</span>
+                </button>
+                <button type="button" class="btn btn-primary ms-1" data-bs-dismiss="modal">
+                    <i class="bx bx-check d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Accept</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>

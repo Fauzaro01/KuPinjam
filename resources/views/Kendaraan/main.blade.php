@@ -4,7 +4,6 @@
 
 @section('head-css')
 <link rel="stylesheet" crossorigin="" href="assets/compiled/css/table-datatable.css">
-<link rel="stylesheet" crossorigin="" href="assets/compiled/css/table-datatable.css">
 @endsection
 
 @section('content')
@@ -92,54 +91,6 @@
 <script src="assets/extensions/datatables.net/js/jquery.dataTables.js"></script>
 <script src="assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
 <script>
-    let dataTable = new DataTable(
-        document.getElementById("table1")
-    , {
-        scrollX: true
-    })
-    function adaptPageDropdown() {
-        const selector = dataTable.wrapper.querySelector(".dataTable-selector")
-        selector.parentNode.parentNode.insertBefore(selector, selector.parentNode)
-        selector.classList.add("form-select")
-    }
-
-    function adaptPagination() {
-        const paginations = dataTable.wrapper.querySelectorAll(
-            "ul.dataTable-pagination-list"
-        )
-
-        for (const pagination of paginations) {
-            pagination.classList.add(...["pagination", "pagination-primary"])
-        }
-
-        const paginationLis = dataTable.wrapper.querySelectorAll(
-            "ul.dataTable-pagination-list li"
-        )
-
-        for (const paginationLi of paginationLis) {
-            paginationLi.classList.add("page-item")
-        }
-
-        const paginationLinks = dataTable.wrapper.querySelectorAll(
-            "ul.dataTable-pagination-list li a"
-        )
-
-        for (const paginationLink of paginationLinks) {
-            paginationLink.classList.add("page-link")
-        }
-    }
-
-    const refreshPagination = () => {
-        adaptPagination()
-    }
-
-    dataTable.on("datatable.init", () => {
-        adaptPageDropdown()
-        refreshPagination()
-    })
-    dataTable.on("datatable.update", refreshPagination)
-    dataTable.on("datatable.sort", refreshPagination)
-
-    dataTable.on("datatable.page", adaptPagination)
+    let dataTable=new DataTable(document.getElementById("table1"),{scrollX:!0});function adaptPageDropdown(){let a=dataTable.wrapper.querySelector(".dataTable-selector");a.parentNode.parentNode.insertBefore(a,a.parentNode),a.classList.add("form-select")}function adaptPagination(){let a=dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list");a.forEach(a=>a.classList.add("pagination","pagination-primary"));let e=dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li");e.forEach(a=>a.classList.add("page-item"));let t=dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li a");t.forEach(a=>a.classList.add("page-link"))}const refreshPagination=()=>adaptPagination();dataTable.on("datatable.init",()=>{adaptPageDropdown(),refreshPagination()}),dataTable.on("datatable.update",refreshPagination),dataTable.on("datatable.sort",refreshPagination),dataTable.on("datatable.page",adaptPagination);
 </script>
 @endsection
