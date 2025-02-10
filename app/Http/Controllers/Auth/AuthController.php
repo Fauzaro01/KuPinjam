@@ -52,28 +52,6 @@ class AuthController extends Controller implements HasMiddleware
 
     }
 
-    // public function bulkstore(Request $request) {
-    //     $request->validate([
-    //         'file' => 'required|mimes:csv|max:10240'
-    //     ]);
-
-    //     try {
-    //         foreach ($this->csvToArray($request->file) as $user) {
-    //             User::create([
-    //                 "id" => Str::random(13),
-    //                 "username" => $req->username,
-    //                 "email" => $req->email,
-    //                 "no_telp" => $req->no_telp,
-    //                 "password" => Hash::make($req->password),
-    //                 "role" => "karyawan" 
-    //             ]);
-    //         }
-    //     } catch (\Throwable $th) {
-            
-    //     }
-
-    // return response()->json(['success' => 'CSV file imported successfully.', "data" => $this->csvToArray($request->file)]);
-    // }
 
     public function authenticate(Request $request) {
         $credentials = $request->validate([
@@ -123,23 +101,5 @@ class AuthController extends Controller implements HasMiddleware
         return redirect()->route('login')
             ->withSuccess('You have logged out successfully!');;
     }
-
-    /* Function Mengubah File CSV menjadi ARRAY */
-
-    // private function csvToArray($file)
-    // {
-    //     $array = [];
-    //     $handle = fopen($file->getRealPath(), 'r');
-        
-    //     $header = fgetcsv($handle);
-        
-    //     while (($row = fgetcsv($handle)) !== FALSE) {
-    //         $array[] = array_combine($header, $row);
-    //     }
-
-    //     fclose($handle);
-
-    //     return $array;
-    // }
 
 }
