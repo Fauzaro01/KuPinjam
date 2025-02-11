@@ -53,7 +53,19 @@
                                 <td>{{$kendaraan['plat_nomor']}}</td>
                                 <td>{{$kendaraan['merk']}}</td>
                                 <td>{{$kendaraan['tahun']}}</td>
-                                <td>{{$kendaraan['jenis_kendaraan']}}</td>
+                                <td>
+                                    @if($kendaraan['jenis_kendaraan'] == 'motor')
+                                    <span class="badge bg-light-primary">
+                                        <i class="bi bi-bicycle me-2"></i>
+                                        Motor
+                                    </span>
+                                    @elseif($kendaraan['jenis_kendaraan'] == 'mobil')
+                                    <span class="badge bg-light-info">
+                                        <i class="bi bi-car-front me-2"></i>
+                                        Mobil
+                                    </span>
+                                    @endif
+                                </td>
                                 <td>
                                     @if($kendaraan['status'] == 'Tersedia')
                                         <span class="badge bg-success">Tersedia</span>

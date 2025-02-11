@@ -16,7 +16,7 @@ class AuthController extends Controller implements HasMiddleware
 {
     public static function middleware() {
         return [
-            new Middleware('guest', except: ['logout', 'dashboard']),
+            new Middleware('guest', except: ['logout', 'dashboard', 'changePassword', 'accountSecurity']),
         ];
     }
 
@@ -100,6 +100,37 @@ class AuthController extends Controller implements HasMiddleware
         $request->session()->regenerateToken();
         return redirect()->route('login')
             ->withSuccess('You have logged out successfully!');;
+    }
+
+    public function accountSecurity() {
+        return view('auth.security');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Password saat ini wajib diisi.',
+            'new_password.required' => 'Password baru wajib diisi.',
+            'new_password.min' => 'Password baru harus memiliki minimal 8 karakter.',
+            'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
+            return redirect()->back()->with([
+                'eror' => 'Password saat ini tidak valid.',
+            ]);
+        }
+
+        $user = Auth::user();
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()->back()->with([
+            'success' => 'Password berhasil diubah.',
+        ]);
     }
 
 }

@@ -67,14 +67,10 @@
                 @endif
             </div>
             <div class="mb-3">
-                <input type="password" name="password" class="form-control p-3 @error('password') is-invalid @enderror" placeholder="Masukan Password Anda" value="{{ old('email') }}" required>
+                <input type="password" name="password" class="form-control p-3 @error('password') is-invalid @enderror" placeholder="Masukan Password Anda" value="{{ old('password') }}" required>
                 @if ($errors->has('password'))
                     <span class="text-danger">{{ $errors->first('password') }}</span>
                 @endif
-            </div>
-            <div class="mb-3 d-flex justify-content-start">
-                <span class="p-1 me-2">Remember me? </span>
-                <input class="form-check-label" type="checkbox" name="rememberme" value="0">
             </div>
             <button type="submit" class="btn btn-custom w-100 py-2">Masuk</button>
         </form>

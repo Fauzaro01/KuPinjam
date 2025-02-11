@@ -48,6 +48,20 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+                @if(Auth::user()->hasRole('karyawan'))
+                <li class="sidebar-item {{ (request()->is('kendaraan')) ? 'active' : '' }}">
+                    <a href="{{route('kendaraan.index')}}" class="sidebar-link">
+                        <i class="bi bi-car-front"></i>
+                        <span>Kendaraan</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {{ (request()->is('peminjaman')) ? 'active' : '' }}">
+                    <a href="{{route('kendaraan.index')}}" class="sidebar-link">
+                        <i class="bi bi-bicycle"></i>
+                        <span>Riwayat Peminjaman</span>
+                    </a>
+                </li>
+                @elseif (Auth::user()->hasRole('administrator'))
                 <li class="sidebar-item {{ (request()->is('kendaraan*'))  ? 'active' : ''}} has-sub">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-stack"></i>
@@ -63,15 +77,12 @@
                         <li class="submenu-item {{ (request()->is('kendaraan/create')) ? 'active' : ''}}">
                             <a href="{{route('kendaraan.create')}} " class="submenu-link">Tambah Kendaraan</a>
                         </li>
-                        <li class="submenu-item">
-                            <a href="{{route('kendaraan.index')}}" class="submenu-link">Histori Peminjaman Terbaru</a>
-                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-item has-sub">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-collection-fill"></i>
-                        <span>Peminjaman</span>
+                        <span>Kelola Peminjaman</span>
                     </a>
                     <ul class="submenu">
                         <li class="submenu-item">
@@ -91,47 +102,25 @@
                         </li>
                     </ul>
                 </li>
-                <li class="sidebar-item has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-grid-1x2-fill"></i>
-                        <span>Management KuPinjam</span>
-                    </a>
-                    <ul class="submenu">
-                        <li class="submenu-item">
-                            <a href="layout-default.html" class="submenu-link">Default Layout</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="layout-vertical-1-column.html" class="submenu-link">1 Column</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="layout-vertical-navbar.html" class="submenu-link">Vertical Navbar</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="layout-rtl.html" class="submenu-link">RTL Layout</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="layout-horizontal.html" class="submenu-link">Horizontal Menu</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="sidebar-item has-sub">
+                <li class="sidebar-item {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}} has-sub">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-people-fill"></i>
                         <span>Pengelola Pengguna</span>
                     </a>
-                    <ul class="submenu">
-                        <li class="submenu-item">
+                    <ul class="submenu {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}}">
+                        <li class="submenu-item {{ (request()->is('admin/usermanagement'))  ? 'active' : ''}}">
                             <a href="{{route('usermanagement.index')}}" class="submenu-link">Daftar Pengguna</a>
                         </li>
-                        <li class="submenu-item">
+                        <li class="submenu-item {{ (request()->is('admin/usermanagement/create'))  ? 'active' : ''}}">
                             <a href="{{route('usermanagement.create')}}" class="submenu-link">Registrasi Pengguna</a>
                         </li>
-                        <li class="submenu-item">
+                        <li class="submenu-item {{ (request()->is('admin/usermanagement/bulkcreate'))  ? 'active' : ''}}">
                             <a href="{{route('usermanagement.bulkcreate')}}" class="submenu-link">Registrasi Pengguna
                                 Masal</a>
                         </li>
                     </ul>
                 </li>
+                @endif
                 <li class="sidebar-title">Setelan</li>
                 <li class="sidebar-item">
                     <a type="button" data-bs-toggle="modal" data-bs-target="#default" class="sidebar-link">
@@ -139,10 +128,10 @@
                         <span>Developer</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="https://github.com/zuramai/mazer/blob/main/CONTRIBUTING.md" class="sidebar-link">
-                        <i class="bi bi-puzzle"></i>
-                        <span>Contribute</span>
+                <li class="sidebar-item {{ (request()->is('account-security')) ? 'active' : ''}}">
+                    <a href="{{route('accountSecurity')}}" class="sidebar-link">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Account Security</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -179,11 +168,11 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-center align-items-center flex-column">
                                     <div class="avatar avatar-2xl">
-                                        <img src="/assets/compiled/jpg/2.jpg" alt="Avatar">
+                                        <img src="http://res.cloudinary.com/dtzcamtgb/image/upload/v1739243312/Project/faces/ennirisy3ale24p5favs.png" alt="Avatar">
                                     </div>
 
-                                    <h3 class="mt-3">John Doe</h3>
-                                    <p class="text-small">Junior Software Engineer</p>
+                                    <h3 class="mt-3">Muhamad Fauzaan</h3>
+                                    <p class="text-small">FullStack Developer</p>
                                 </div>
                             </div>
                         </div>
@@ -193,11 +182,11 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-center align-items-center flex-column">
                                     <div class="avatar avatar-2xl">
-                                        <img src="/assets/compiled/jpg/2.jpg" alt="Avatar">
+                                        <img src="http://res.cloudinary.com/dtzcamtgb/image/upload/v1739243329/Project/faces/iusxh0sixgubpagin6em.jpg" alt="Avatar">
                                     </div>
 
-                                    <h3 class="mt-3">John Doe</h3>
-                                    <p class="text-small">Junior Software Engineer</p>
+                                    <h3 class="mt-3">Maulana Rivqi</h3>
+                                    <p class="text-small">Innovation Manager</p>
                                 </div>
                             </div>
                         </div>
@@ -207,11 +196,11 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-center align-items-center flex-column">
                                     <div class="avatar avatar-2xl">
-                                        <img src="/assets/compiled/jpg/2.jpg" alt="Avatar">
+                                        <img src="https://res.cloudinary.com/dtzcamtgb/image/upload/v1739243324/Project/faces/b2kmvsx5tksw0se3hbjq.jpg" alt="Avatar">
                                     </div>
 
-                                    <h3 class="mt-3">John Doe</h3>
-                                    <p class="text-small">Junior Software Engineer</p>
+                                    <h3 class="mt-3">Muhammad Haikan SyahPutra</h3>
+                                    <p class="text-small">UX Designer</p>
                                 </div>
                             </div>
                         </div>

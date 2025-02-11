@@ -20,6 +20,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/authenticate', 'authenticate')->name('authenticate');
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::post('/logout', 'logout')->name('logout');
+    Route::get('/account-security', 'accountSecurity')->name('accountSecurity');
+    Route::post('/changepassword', 'changePassword')->name('changePassword');   
 });
 
 Route::controller(KendaraanController::class)->prefix('kendaraan')->group(function () {
