@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('peminjamans', function (Blueprint $table) {
-            $table->id('id');
+            $table->id();
             $table->string('user_id', 13);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreignId('kendaraan_id')->constrained('kendaraans');
-            $table->date('tanggal_pinjam');
-            $table->date('tanggal_kembali');
-            $table->enum('status_peminjaman', ['dipinjam', 'selesai', 'diperpanjang'])->default('dipinjam');
+            $table->dateTime('tanggal_pinjam');
+            $table->dateTime('tanggal_kembali');
+            $table->enum('status_peminjaman', ['dipinjam', 'selesai'])->default('dipinjam');
             $table->string('tujuan', 255);
             $table->text('keterangan')->nullable();
             $table->timestamps();
