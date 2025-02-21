@@ -1,6 +1,8 @@
 # KuPinjam - Platform Peminjaman Kendaraan Industri untuk Karyawan
 
-![KuPinjam](public/assets/static/images/logo/kupinjam.webp)
+<p align="center">
+  <img src="public/assets/static/images/logo/kupinjam.webp" alt="Gambar Contoh" width="350">
+</p>
 
 **KuPinjam** adalah sebuah platform berbasis web yang menyediakan layanan peminjaman kendaraan untuk kebutuhan industri. Dengan KuPinjam, perusahaan dapat memudahkan proses peminjaman kendaraan bagi para karyawannya. Data peminjaman akan tercatat dengan rapi dan terukur, sehingga memudahkan pengelolaan dan pemantauan penggunaan kendaraan perusahaan.
 
