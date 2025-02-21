@@ -64,4 +64,8 @@ class User extends Authenticatable
 
         return $this->role === $roles;
     }
+
+    public function peminjamans() {
+        return $this->hasMany(peminjamans::class);
+    }
 }

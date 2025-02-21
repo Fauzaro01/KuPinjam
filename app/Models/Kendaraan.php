@@ -20,6 +20,11 @@ class Kendaraan extends Model
         'status',
     ];
 
+    public function peminjamans()
+    {
+        return $this->hasMany(Peminjaman::class);
+    }
+
     public function getStatusAttribute($value)
     {
         return ucfirst($value);
