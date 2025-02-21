@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\KendaraanController;
+use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\Admin\UserManagementController;
 
 // Route::get('/', function () {
@@ -31,6 +32,16 @@ Route::controller(KendaraanController::class)->prefix('kendaraan')->group(functi
     Route::get('/{kendaraan}/edit', 'edit')->name('kendaraan.edit');
     Route::put('/{kendaraan}/update', 'update')->name('kendaraan.update');
     Route::delete('/{kendaraan}', 'destroy')->name('kendaraan.destroy');
+});
+
+Route::controller(PeminjamanController::class)->prefix('/peminjaman')->group(function () {
+    Route::get('/', 'index')->name('peminjaman.index');
+    Route::get('/create', 'create')->name('peminjaman.create');
+    Route::post('/store' , 'store')->name('peminjaman.store');
+    Route::get('/{peminjaman}/edit', 'edit')->name('peminjaman.edit');
+    Route::put('/{peminjaman}/update', 'update')->name('peminjaman.update');
+    Route::delete('/{peminjaman}', 'destroy')->name('peminjaman.destroy');
+    Route::post('/pinjam' , 'pinjam')->name('peminjaman.pinjam');
 });
 
 Route::prefix('/admin')->middleware('auth')->group(function () {
