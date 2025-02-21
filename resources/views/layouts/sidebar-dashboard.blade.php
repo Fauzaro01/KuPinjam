@@ -49,77 +49,65 @@
                     </a>
                 </li>
                 @if(Auth::user()->hasRole('karyawan'))
-                <li class="sidebar-item {{ (request()->is('kendaraan')) ? 'active' : '' }}">
-                    <a href="{{route('kendaraan.index')}}" class="sidebar-link">
-                        <i class="bi bi-car-front"></i>
-                        <span>Kendaraan</span>
-                    </a>
-                </li>
-                <li class="sidebar-item {{ (request()->is('peminjaman')) ? 'active' : '' }}">
-                    <a href="{{route('kendaraan.index')}}" class="sidebar-link">
-                        <i class="bi bi-bicycle"></i>
-                        <span>Riwayat Peminjaman</span>
-                    </a>
-                </li>
-                @elseif (Auth::user()->hasRole('administrator'))
-                <li class="sidebar-item {{ (request()->is('kendaraan*'))  ? 'active' : ''}} has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-stack"></i>
-                        <span>Kendaraan</span>
-                    </a>
-                    <ul class="submenu {{ (request()->is('kendaraan*')) ? 'active' : ''}}">
-                        <li class="submenu-item {{ (request()->is('kendaraan/statistic')) ? 'active' : ''}}">
-                            <a href="{{route('kendaraan.index')}} " class="submenu-link">Statistik Kendaraan (Belum)</a>
-                        </li>
-                        <li class="submenu-item {{ (request()->is('kendaraan')) ? 'active' : ''}}">
-                            <a href="{{route('kendaraan.index')}}" class="submenu-link">Daftar Kendaraan</a>
-                        </li>
-                        <li class="submenu-item {{ (request()->is('kendaraan/create')) ? 'active' : ''}}">
-                            <a href="{{route('kendaraan.create')}} " class="submenu-link">Tambah Kendaraan</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="sidebar-item has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-collection-fill"></i>
-                        <span>Kelola Peminjaman</span>
-                    </a>
-                    <ul class="submenu">
-                        <li class="submenu-item">
-                            <a href="extra-component-avatar.html" class="submenu-link">Avatar</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="extra-component-comment.html" class="submenu-link">Comment</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="extra-component-divider.html" class="submenu-link">Divider</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="extra-component-date-picker.html" class="submenu-link">Date Picker</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="extra-component-flag.html" class="submenu-link">Flag</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="sidebar-item {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}} has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-people-fill"></i>
-                        <span>Pengelola Pengguna</span>
-                    </a>
-                    <ul class="submenu {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}}">
-                        <li class="submenu-item {{ (request()->is('admin/usermanagement'))  ? 'active' : ''}}">
-                            <a href="{{route('usermanagement.index')}}" class="submenu-link">Daftar Pengguna</a>
-                        </li>
-                        <li class="submenu-item {{ (request()->is('admin/usermanagement/create'))  ? 'active' : ''}}">
-                            <a href="{{route('usermanagement.create')}}" class="submenu-link">Registrasi Pengguna</a>
-                        </li>
-                        <li class="submenu-item {{ (request()->is('admin/usermanagement/bulkcreate'))  ? 'active' : ''}}">
-                            <a href="{{route('usermanagement.bulkcreate')}}" class="submenu-link">Registrasi Pengguna
-                                Masal</a>
-                        </li>
-                    </ul>
-                </li>
+                    <li class="sidebar-item {{ (request()->is('kendaraan')) ? 'active' : '' }}">
+                        <a href="{{route('kendaraan.index')}}" class="sidebar-link">
+                            <i class="bi bi-car-front"></i>
+                            <span>Kendaraan</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ (request()->is('peminjaman')) ? 'active' : '' }}">
+                        <a href="{{route('peminjaman.index')}}" class="sidebar-link">
+                            <i class="bi bi-bicycle"></i>
+                            <span>Riwayat Peminjaman</span>
+                        </a>
+                    </li>
+                @elseif(Auth::user()->hasRole('administrator'))
+                    <li class="sidebar-item {{ (request()->is('kendaraan*'))  ? 'active' : ''}} has-sub">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-stack"></i>
+                            <span>Kendaraan</span>
+                        </a>
+                        <ul class="submenu {{ (request()->is('kendaraan*')) ? 'active' : ''}}">
+                            <li class="submenu-item {{ (request()->is('kendaraan/statistic')) ? 'active' : ''}}">
+                                <a href="{{route('kendaraan.index')}} " class="submenu-link">Statistik Kendaraan (Belum)</a>
+                            </li>
+                            <li class="submenu-item {{ (request()->is('kendaraan')) ? 'active' : ''}}">
+                                <a href="{{route('kendaraan.index')}}" class="submenu-link">Daftar Kendaraan</a>
+                            </li>
+                            <li class="submenu-item {{ (request()->is('kendaraan/create')) ? 'active' : ''}}">
+                                <a href="{{route('kendaraan.create')}} " class="submenu-link">Tambah Kendaraan</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-item {{ (request()->is('peminjaman')) ? 'active' : '' }} has-sub">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-collection-fill"></i>
+                            <span>Kelola Peminjaman</span>
+                        </a>
+                        <ul class="submenu {{ (request()->is('peminjaman')) ? 'active' : '' }}">
+                            <li class="submenu-item {{ (request()->is('peminjaman/index')) ? 'active' : ''}}">
+                                <a href="{{route('peminjaman.index')}}" class="submenu-link">Daftar Peminjaman</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-item {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}} has-sub">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Pengelola Pengguna</span>
+                        </a>
+                        <ul class="submenu {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}}">
+                            <li class="submenu-item {{ (request()->is('admin/usermanagement'))  ? 'active' : ''}}">
+                                <a href="{{route('usermanagement.index')}}" class="submenu-link">Daftar Pengguna</a>
+                            </li>
+                            <li class="submenu-item {{ (request()->is('admin/usermanagement/create'))  ? 'active' : ''}}">
+                                <a href="{{route('usermanagement.create')}}" class="submenu-link">Registrasi Pengguna</a>
+                            </li>
+                            <li class="submenu-item {{ (request()->is('admin/usermanagement/bulkcreate'))  ? 'active' : ''}}">
+                                <a href="{{route('usermanagement.bulkcreate')}}" class="submenu-link">Registrasi Pengguna
+                                    Masal</a>
+                            </li>
+                        </ul>
+                    </li>
                 @endif
                 <li class="sidebar-title">Setelan</li>
                 <li class="sidebar-item">
