@@ -89,14 +89,13 @@
                             </td>
                             @if(Auth::user()->hasRole("administrator"))
                             <td>
-                                <a class="btn btn-sm btn-warning" href="{{ route('kendaraan.edit', $kendaraan) }}"><iclass="bi bi-pencil-square"></iclass=></a>
+                                <a class="btn btn-sm btn-warning" href="{{ route('kendaraan.edit', $kendaraan) }}"><i class="bi bi-pencil-square"></i></a>
                                 <form action="{{ route('kendaraan.destroy', $kendaraan->id) }}" method="POST"
                                     style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger" type="submit"
-                                        onclick="return confirm('Yakin ingin menghapus kendaraan ini?')"><i
-                                            class="bi bi-trash3"></i></button>
+                                        onclick="return confirm('Yakin ingin menghapus kendaraan ini?')"><i class="bi bi-trash3"></i></button>
                                 </form>
                             </td>
                             @else
