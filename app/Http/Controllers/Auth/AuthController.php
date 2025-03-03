@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Kendaraan;
+use App\Models\Peminjaman;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -80,7 +81,8 @@ class AuthController extends Controller implements HasMiddleware
             if (Auth::user()->hasRole('administrator')) {
                 return view('dashboard.main', [
                     'users' => User::all(),
-                    'kendaraan' => Kendaraan::all()
+                    'kendaraan' => Kendaraan::all(),
+                    'peminjamans' => Peminjaman::with(['user', 'kendaraan'])->get(),
                 ]);
             }
 
