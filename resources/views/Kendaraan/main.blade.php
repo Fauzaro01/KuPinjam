@@ -51,6 +51,8 @@
                             </th>
                             <th><a class="dataTable-sorter">Merek</a>
                             </th>
+                            <th><a class="dataTable-sorter">Model</a>
+                            </th>
                             <th><a class="dataTable-sorter">Tahun</a>
                             </th>
                             <th><a class="dataTable-sorter">Jenis Kendaraan</a>
@@ -66,6 +68,7 @@
                         <tr>
                             <td>{{$kendaraan['plat_nomor']}}</td>
                             <td>{{$kendaraan['merk']}}</td>
+                            <td>{{$kendaraan['model']}}</td>
                             <td>{{$kendaraan['tahun']}}</td>
                             <td>
                                 @if($kendaraan['jenis_kendaraan'] == 'motor')
