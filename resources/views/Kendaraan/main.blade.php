@@ -32,14 +32,16 @@
             </div>
             <div class="card-body">
                 @if(session('success'))
-                <div class="alert alert-success">
+                <div class="alert alert-light-success color-success alert-dismissible show fade">
                     {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                @endif
-
-                @if(session('error'))
+                @elseif(session('error'))
                 <div class="alert alert-danger">
-                    {{ session('error') }}
+                    <div class="alert alert-light-danger color-danger alert-dismissible show fade">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 </div>
                 @endif
                 <table class="table table-striped dataTable-table" id="table1" width="100%">
@@ -170,27 +172,7 @@
 <script src="/assets/extensions/flatpickr/flatpickr.min.js"></script>
 <script src="/assets/extensions/flatpickr/plugins/confirmDate/confirmDate.js"></script>
 <script>
-    flatpickr("#tanggal_waktu", {
-        enableTime: true,
-        dateFormat: "Y-m-d H:i",
-        minDate: "today",
-        mode: "range",
-        time_24hr: true,
-        plugins: [new confirmDatePlugin({})]
-    });
-    function openDatePicker(id) {
-        var modalElement = document.getElementById('inlineForm');
-        var kendaraanIdInput = document.getElementById('kendaraan_id_input')
-        var modal = new bootstrap.Modal(modalElement);
-
-        modalElement.removeAttribute('inert');
-        modal.show();
-        kendaraanIdInput.value = id;
-        console.log(id);
-    }
-    document.querySelector('#inlineForm').addEventListener('hidden.bs.modal', function () {
-        this.setAttribute('inert', 'true');
-    });
+    function openDatePicker(e){var t=document.getElementById("inlineForm"),n=document.getElementById("kendaraan_id_input"),i=new bootstrap.Modal(t);t.removeAttribute("inert"),i.show(),n.value=e,console.log(e)}flatpickr("#tanggal_waktu",{enableTime:!0,dateFormat:"Y-m-d H:i",minDate:"today",mode:"range",time_24hr:!0,plugins:[new confirmDatePlugin({})]}),document.querySelector("#inlineForm").addEventListener("hidden.bs.modal",(function(){this.setAttribute("inert","true")}));
 </script>
 @endif
 

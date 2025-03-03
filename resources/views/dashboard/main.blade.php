@@ -11,7 +11,6 @@
     <link rel="stylesheet" crossorigin href="/assets/compiled/css/app.css">
     <link rel="stylesheet" crossorigin href="/assets/compiled/css/app-dark.css">
     <link rel="stylesheet" crossorigin href="/assets/compiled/css/iconly.css">
-    <link rel="stylesheet" href="/assets/extensions/simple-datatables/style.css">
     <link rel="stylesheet" crossorigin="" href="/assets/compiled/css/table-datatable.css">
 </head>
 
@@ -127,7 +126,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
-                                            <table class="table table-hover mb-0">
+                                            <table class="table table-hover mb-0" id="table1">
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
@@ -180,6 +179,12 @@
                                         </div>
                                     </div>
                                 </div>
+                                <script src="/assets/extensions/datatables.net/js/jquery.js"></script>
+                                <script src="/assets/extensions/datatables.net/js/jquery.dataTables.js"></script>
+                                <script src="/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
+                                <script>
+                                    let dataTable = new DataTable(document.getElementById("table1"), { scrollX: !0 }); function adaptPageDropdown() { let a = dataTable.wrapper.querySelector(".dataTable-selector"); a.parentNode.parentNode.insertBefore(a, a.parentNode), a.classList.add("form-select") } function adaptPagination() { let a = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list"); a.forEach(a => a.classList.add("pagination", "pagination-primary")); let e = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li"); e.forEach(a => a.classList.add("page-item")); let t = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li a"); t.forEach(a => a.classList.add("page-link")) } const refreshPagination = () => adaptPagination(); dataTable.on("datatable.init", () => { adaptPageDropdown(), refreshPagination() }), dataTable.on("datatable.update", refreshPagination), dataTable.on("datatable.sort", refreshPagination), dataTable.on("datatable.page", adaptPagination);
+                                </script>
                                 @else
                                 <div class="card">
                                     <div class="card-header">
@@ -255,7 +260,7 @@
             @include('layouts/footer-dashboard')
         </div>
     </div>
-    <script src="/assets/static/js/components/dark.js"></script>
+    <script src="/assets/static/js/components/dark.js"></>
     <script src="/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 
     <script src="/assets/compiled/js/app.js"></script>

@@ -30,6 +30,19 @@
                 <h4 class="card-title">Riwayat Peminjaman {{(Auth::user()->hasRole('administrator') ? "Kendaraan" : "Anda")}}</h4>
             </div>
             <div class="card-body">
+                @if(session('success'))
+                <div class="alert alert-light-success color-success alert-dismissible show fade">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @elseif(session('error'))
+                <div class="alert alert-danger">
+                    <div class="alert alert-light-danger color-danger alert-dismissible show fade">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+                @endif
                 <table class="table table-striped dataTable-table" id="table1" width="100%">
                     <thead>
                         @if(Auth::user()->hasRole('administrator'))

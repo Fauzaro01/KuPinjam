@@ -89,7 +89,6 @@ class PeminjamanController extends Controller
 
     public function destroy(Peminjaman $peminjaman)
     {
-        // Update status kendaraan kembali ke tersedia
         $kendaraan = Kendaraan::find($peminjaman->kendaraan_id);
         $kendaraan->status = 'tersedia';
         $kendaraan->save();
@@ -97,27 +96,25 @@ class PeminjamanController extends Controller
         $peminjaman->delete();
         return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil dihapus!');
     }
-
+    
     public function pinjam(Request $request) {
         $validated = $request->validate([
             'kendaraan_id' => 'required|exists:kendaraans,id',
-            'tanggal_waktu' => 'required|string', // Format range
+            'tanggal_waktu' => 'required|string',
             'tujuan' => 'required|string|max:255',
         ]);
-
+        
         $kendaraan = Kendaraan::find($validated['kendaraan_id']);
         if ($kendaraan->status !== 'Tersedia') {
-            return response()->json(['message' => 'Kendaraan tidak tersedia'], 400);
+            return redirect()->route('peminjaman.index')->with('error', 'Kendaraan tidak tersedia');
         }
-
-        // Pisahkan tanggal pinjam & kembali dari input range
+        
         [$tanggalPinjam, $tanggalKembali] = explode(" to ", $validated['tanggal_waktu']);
-
-        // Pastikan tanggal valid
+        
         if (Carbon::parse($tanggalPinjam)->gte(Carbon::parse($tanggalKembali))) {
-            return response()->json(['message' => 'Tanggal kembali harus setelah tanggal pinjam'], 400);
+            return redirect()->route('peminjaman.index')->with('error', 'Tanggal kembali harus setelah tanggal pinjam');
         }
-
+        
         $peminjaman = Peminjaman::create([
             'user_id' => auth()->user()->id,
             'kendaraan_id' => $kendaraan->id,
@@ -127,11 +124,11 @@ class PeminjamanController extends Controller
             'tujuan' => $validated['tujuan'],
             'keterangan' => $request->keterangan,
         ]);
-
+        
         $kendaraan->update(['status' => 'dipinjam']);
-
-        return response()->json($peminjaman, 201);
+        
+        return redirect()->route('peminjaman.index')->with('success', 'Kendaraan telah kamu pinjam!');
     }
-
-
+    
+    
 }

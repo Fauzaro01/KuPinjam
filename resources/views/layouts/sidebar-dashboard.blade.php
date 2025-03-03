@@ -68,9 +68,6 @@
                             <span>Kendaraan</span>
                         </a>
                         <ul class="submenu {{ (request()->is('kendaraan*')) ? 'active' : ''}}">
-                            <li class="submenu-item {{ (request()->is('kendaraan/statistic')) ? 'active' : ''}}">
-                                <a href="{{route('kendaraan.index')}} " class="submenu-link">Statistik Kendaraan (Belum)</a>
-                            </li>
                             <li class="submenu-item {{ (request()->is('kendaraan')) ? 'active' : ''}}">
                                 <a href="{{route('kendaraan.index')}}" class="submenu-link">Daftar Kendaraan</a>
                             </li>
