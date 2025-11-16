@@ -18,8 +18,10 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center space-x-3">
-                    <img src="https://bintangmas-engineering.com/wp-content/uploads/2025/01/cropped-site-logo.png" 
-                         alt="KuPinjam Logo" class="h-10 w-10 rounded-lg shadow-md">
+                    <div class="h-10 w-10 rounded-lg shadow-md overflow-hidden bg-white flex items-center justify-center">
+                        <img src="/assets/static/images/logo/kupinjam-full.png" 
+                             alt="KuPinjam Logo" class="h-full w-full object-cover bg-size-[400%]">
+                    </div>
                     <div class="flex flex-col">
                         <span class="text-xl font-bold text-gray-900">KuPinjam</span>
                         <span class="text-xs text-gray-500">Vehicle Rental System</span>
@@ -171,7 +173,7 @@
                     <div class="aspect-w-3 aspect-h-4 lg:aspect-w-1 lg:aspect-h-1">
                         <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-3xl transform rotate-3 shadow-2xl"></div>
                         <div class="relative bg-white rounded-3xl shadow-2xl p-8 transform -rotate-1">
-                            <img src="https://bintangmas-engineering.com/wp-content/uploads/2025/01/cropped-site-logo.png" 
+                            <img src="/assets/static/images/logo/logo-min-1.png" 
                                  alt="KuPinjam Vehicle System" 
                                  class="w-full h-full object-contain filter drop-shadow-lg">
                         </div>
@@ -406,8 +408,10 @@
                 <!-- Company Info -->
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-3 mb-4">
-                        <img src="https://bintangmas-engineering.com/wp-content/uploads/2025/01/cropped-site-logo.png" 
-                             alt="KuPinjam Logo" class="h-10 w-10 rounded-lg">
+                        <div class="h-10 w-10 rounded-lg overflow-hidden bg-white flex items-center justify-center">
+                            <img src="/assets/static/images/logo/kupinjam.webp" 
+                                 alt="KuPinjam Logo" class="h-full w-full object-cover">
+                        </div>
                         <div>
                             <span class="text-xl font-bold">KuPinjam</span>
                             <div class="text-sm text-gray-400">Vehicle Rental System</div>
