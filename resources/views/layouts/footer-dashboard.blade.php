@@ -1,11 +1,6 @@
-<footer>
-    <div class="footer clearfix mb-0 text-muted">
-        <div class="float-start">
-            <p>{{date('Y')}} &copy; PT Bintang Mas Karya Nusantara <br> SMKS TI Muhammadiyah 1 Cikampek. </p>
-        </div>
-        <div class="float-end">
-            <p>Pages Crafted with <span class="text-danger"><i class="bi bi-heart-fill icon-mid"></i></span>
-                by <a href="https://saugi.me">Saugi</a></p>
-        </div>
+<footer class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 px-6 py-4">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
+        <span>&copy; {{ date('Y') }} KuPinjam. All rights reserved.</span>
+        <span>Sistem Manajemen Peminjaman Kendaraan</span>
     </div>
 </footer>

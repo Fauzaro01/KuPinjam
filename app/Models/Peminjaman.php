@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Carbon\Carbon;
 
 class Peminjaman extends Model
@@ -27,14 +29,19 @@ class Peminjaman extends Model
         'tanggal_kembali' => 'datetime',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function kendaraan()
+    public function kendaraan(): BelongsTo
     {
         return $this->belongsTo(Kendaraan::class, 'kendaraan_id', 'id');
+    }
+
+    public function riwayatPengembalian(): HasOne
+    {
+        return $this->hasOne(RiwayatPengembalian::class);
     }
 
     public function scopeAktif($query)

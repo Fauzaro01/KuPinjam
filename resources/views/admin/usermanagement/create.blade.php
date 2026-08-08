@@ -1,119 +1,74 @@
-@extends('layouts/default-dashboard')
-@section('title', 'Tambah Pengguna')
+@extends('layouts.default-dashboard')
+
+@section('title', 'Tambah User')
 
 @section('content')
-<div class="col-md-6 col-12">
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Tambah Pengguna Baru</h4>
-        </div>
-        <div class="card-content">
-            <div class="card-body">
-                <form class="form form-vertical" action="{{ route('usermanagement.store') }}" method="POST">
-                    @csrf
-                    <div class="form-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group has-icon-left">
-                                    <label for="username-input">Username</label>
-                                    <div class="position-relative">
-                                        <input type="text" class="form-control @error('username') is-invalid @enderror"
-                                            name="username" placeholder="Masukan Username" id="username-input"
-                                            value="{{ old('username') }}">
-                                        <div class="form-control-icon">
-                                            <i class="bi bi-person-lines-fill"></i>
-                                        </div>
-                                    </div>
-                                    @error('username')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group has-icon-left">
-                                    <label for="email-id-icon">Email</label>
-                                    <div class="position-relative">
-                                        <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                            name="email" placeholder="Masukan Email Pengguna" id="email-id-icon"
-                                            value="{{ old('email') }}">
-                                        <div class="form-control-icon">
-                                            <i class="bi bi-envelope"></i>
-                                        </div>
-                                    </div>
-                                    @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group has-icon-left">
-                                    <label for="no_telp_input">No Telp</label>
-                                    <div class="position-relative">
-                                        <input type="text" class="form-control @error('no_telp') is-invalid @enderror"
-                                            name="no_telp" placeholder="Masukan No Telepon (628123456)"
-                                            id="no_telp_input" value="{{ old('no_telp') }}">
-                                        <div class="form-control-icon">
-                                            <i class="bi bi-telephone"></i>
-                                        </div>
-                                    </div>
-                                    @error('no_telp')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group has-icon-left">
-                                    <label for="password-id-icon">Password</label>
-                                    <div class="position-relative">
-                                        <input type="password" minlength="8"
-                                            class="form-control @error('password') is-invalid @enderror" name="password"
-                                            placeholder="Masukan Password Pengguna" id="password-id-icon"
-                                            value="{{ old('password') }}">
-                                        <div class="form-control-icon">
-                                            <i class="bi bi-key"></i>
-                                        </div>
-                                    </div>
-                                    @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group has-icon-left">
-                                    <label for="role_input">Role</label>
-                                    <div class="position-relative">
-                                        <select class="form-control @error('role') is-invalid @enderror" name="role"
-                                            placeholder="Role Pengguna" id="role_input">
-                                            <option value="karyawan" {{ old('role')=='karyawan' ? 'selected' : '' }}>
-                                                Karyawan</option>
-                                            <option value="administrator" {{ old('role')=='administrator' ? 'selected'
-                                                : '' }}>Administrator</option>
-                                        </select>
-                                        <div class="form-control-icon">
-                                            <i class="bi bi-diagram-2"></i>
-                                        </div>
-                                    </div>
-                                    @error('role')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-12 mt-3 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary me-1 mb-1">Kirim</button>
-                                <button type="reset" class="btn btn-light-secondary me-1 mb-1">Reset</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
+<div class="max-w-2xl">
+    <div class="mb-6 flex items-center gap-3">
+        <a href="{{ route('usermanagement.index') }}" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Tambah User</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-0.5">Buat akun pengguna baru</p>
         </div>
     </div>
-</div>
 
+    <div class="card">
+        @if($errors->any())
+            <div class="mb-5 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg">
+                @foreach($errors->all() as $error)
+                    <p class="text-sm text-red-700 dark:text-red-300">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('usermanagement.store') }}" class="space-y-5">
+            @csrf
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Nama Pengguna</label>
+                <input type="text" name="username" value="{{ old('username') }}"
+                       class="input-field @error('username') border-red-500 @enderror"
+                       placeholder="Nama lengkap" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+                <input type="email" name="email" value="{{ old('email') }}"
+                       class="input-field @error('email') border-red-500 @enderror"
+                       placeholder="email@perusahaan.com" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Nomor Telepon</label>
+                <input type="text" name="no_telp" value="{{ old('no_telp') }}"
+                       class="input-field @error('no_telp') border-red-500 @enderror"
+                       placeholder="0812xxxxxxxx" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
+                <input type="password" name="password"
+                       class="input-field @error('password') border-red-500 @enderror"
+                       placeholder="Min. 8 karakter" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Role</label>
+                <select name="role" class="input-field @error('role') border-red-500 @enderror" required>
+                    <option value="karyawan" {{ old('role') === 'karyawan' ? 'selected' : '' }}>Karyawan</option>
+                    <option value="administrator" {{ old('role') === 'administrator' ? 'selected' : '' }}>Administrator</option>
+                </select>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="btn-primary">Simpan User</button>
+                <a href="{{ route('usermanagement.index') }}" class="btn-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection

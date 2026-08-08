@@ -1,188 +1,257 @@
-@extends('layouts/default-dashboard')
+@extends('layouts.default-dashboard')
 
-@section('title', 'Daftar Kendaraan')
-
-@section('head-css')
-<link rel="stylesheet" href="/assets/compiled/css/table-datatable.css">
-<link rel="stylesheet" href="/assets/extensions/flatpickr/flatpickr.min.css">
-@endsection
+@section('title', 'Kendaraan')
 
 @section('content')
-<div class="page-heading">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>KuPinjam</h3>
-                <p class="text-subtitle text-muted">List Kendaran yang terdaftar pada layanan KuPinjam</p>
-            </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Kendaraan</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Daftar Kendaran</li>
-                    </ol>
-                </nav>
-            </div>
+{{-- Modal state di-scope ke seluruh halaman --}}
+<div
+    class="space-y-6"
+    x-data="{
+        modalOpen: false,
+        kendaraanId: '',
+        kendaraanLabel: '',
+        tanggalPinjam: '',
+        tanggalKembali: '',
+        tujuan: '',
+        keterangan: ''
+    }"
+    @open-modal-pinjam.window="
+        kendaraanId    = $event.detail.id;
+        kendaraanLabel = $event.detail.plat + ' — ' + $event.detail.label;
+        tanggalPinjam  = '';
+        tanggalKembali = '';
+        tujuan         = '';
+        keterangan     = '';
+        modalOpen      = true;
+    "
+>
+    {{-- Page heading --}}
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Kendaraan</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Daftar kendaraan perusahaan</p>
+        </div>
+        @can('create', \App\Models\Kendaraan::class)
+            <a href="{{ route('kendaraan.create') }}" class="btn-primary flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Tambah Kendaraan
+            </a>
+        @endcan
+    </div>
+
+    {{-- Tabel --}}
+    <div class="card">
+        <div class="table-container">
+            <table class="table-base datatable">
+                <thead>
+                    <tr>
+                        <th>Plat Nomor</th>
+                        <th>Merk</th>
+                        <th>Model</th>
+                        <th>Tahun</th>
+                        <th>Jenis</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($kendaraans as $kendaraan)
+                        <tr>
+                            <td class="font-semibold">{{ $kendaraan->plat_nomor }}</td>
+                            <td>{{ $kendaraan->merk }}</td>
+                            <td>{{ $kendaraan->model }}</td>
+                            <td>{{ $kendaraan->tahun }}</td>
+                            <td class="capitalize">{{ $kendaraan->jenis_kendaraan }}</td>
+                            <td>
+                                @if($kendaraan->status === 'tersedia')
+                                    <span class="badge-green">Tersedia</span>
+                                @elseif($kendaraan->status === 'dipinjam')
+                                    <span class="badge-yellow">Dipinjam</span>
+                                @else
+                                    <span class="badge-red">Perawatan</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if(Auth::user()->hasRole('karyawan') && $kendaraan->status === 'tersedia')
+                                    {{-- Karyawan: tombol pinjam membuka modal --}}
+                                    <button
+                                        type="button"
+                                        @click="$dispatch('open-modal-pinjam', {
+                                            id:    '{{ $kendaraan->id }}',
+                                            plat:  '{{ $kendaraan->plat_nomor }}',
+                                            label: '{{ addslashes($kendaraan->merk . ' ' . $kendaraan->model) }}'
+                                        })"
+                                        class="btn-primary text-xs py-1 px-3">
+                                        Pinjam
+                                    </button>
+                                @elseif(Auth::user()->hasRole('karyawan'))
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">Tidak tersedia</span>
+                                @else
+                                    {{-- Administrator: tombol edit & hapus --}}
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('kendaraan.edit', $kendaraan) }}"
+                                           class="btn-secondary text-xs py-1 px-3">Edit</a>
+                                        <form method="POST"
+                                              action="{{ route('kendaraan.destroy', $kendaraan) }}"
+                                              onsubmit="return confirm('Hapus kendaraan ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-danger text-xs py-1 px-3">Hapus</button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center py-8 text-gray-400">Belum ada data kendaraan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
-    <section class="section">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">Daftar Keseluruhan Kendaraan</h4>
-            </div>
-            <div class="card-body">
-                @if(session('success'))
-                <div class="alert alert-light-success color-success alert-dismissible show fade">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                @elseif(session('error'))
-                <div class="alert alert-danger">
-                    <div class="alert alert-light-danger color-danger alert-dismissible show fade">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </div>
-                @endif
-                <table class="table table-striped dataTable-table" id="table1" width="100%">
-                    <thead>
-                        <tr>
-                            <th><a class="dataTable-sorter">Plat Nomor</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Merek</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Model</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Tahun</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Jenis Kendaraan</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Status</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Aksi</a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($kendaraans as $kendaraan)
-                        <tr>
-                            <td>{{$kendaraan['plat_nomor']}}</td>
-                            <td>{{$kendaraan['merk']}}</td>
-                            <td>{{$kendaraan['model']}}</td>
-                            <td>{{$kendaraan['tahun']}}</td>
-                            <td>
-                                @if($kendaraan['jenis_kendaraan'] == 'motor')
-                                <span class="badge bg-light-primary">
-                                    <i class="bi bi-bicycle me-2"></i>
-                                    Motor
-                                </span>
-                                @elseif($kendaraan['jenis_kendaraan'] == 'mobil')
-                                <span class="badge bg-light-info">
-                                    <i class="bi bi-car-front me-2"></i>
-                                    Mobil
-                                </span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($kendaraan['status'] == 'Tersedia')
-                                <span class="badge bg-success">Tersedia</span>
-                                @elseif($kendaraan['status'] == 'Dipinjam')
-                                <span class="badge bg-warning">DiPinjam</span>
-                                @else
-                                <span class="badge bg-danger">Perbaikan</span>
-                                @endif
-                            </td>
-                            @if(Auth::user()->hasRole("administrator"))
-                            <td>
-                                <a class="btn btn-sm btn-warning" href="{{ route('kendaraan.edit', $kendaraan) }}"><i class="bi bi-pencil-square"></i></a>
-                                <form action="{{ route('kendaraan.destroy', $kendaraan->id) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger" type="submit"
-                                        onclick="return confirm('Yakin ingin menghapus kendaraan ini?')"><i class="bi bi-trash3"></i></button>
-                                </form>
-                            </td>
-                            @else
-                            <td>
-                                <button type="button" class="btn btn-sm btn-success"
-                                    onclick="openDatePicker({{ $kendaraan->id }})">
-                                    <i class="bi bi-bookmark-plus-fill"> Pinjam Kendaraan</i>
-                                </button>
-                            </td>
-                            @endif
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-</div>
 
-@if(Auth::user()->hasRole('karyawan'))
-<div class="modal fade text-left" id="inlineForm" tabindex="-1" aria-labelledby="myModalLabel33" aria-hidden="true"
-    role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel33">Formulir Pinjam Kendaraan</h4>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Menutup">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="bi bi-x">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
+    {{-- ====================================================
+         Modal Pinjam Kendaraan (karyawan only, Alpine.js)
+         ==================================================== --}}
+    <div
+        x-show="modalOpen"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+        @keydown.escape.window="modalOpen = false"
+        style="display: none;"
+    >
+        {{-- Panel modal --}}
+        <div
+            x-show="modalOpen"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden"
+            @click.outside="modalOpen = false"
+        >
+            {{-- Header modal --}}
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ajukan Peminjaman</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5" x-text="kendaraanLabel"></p>
+                </div>
+                <button
+                    type="button"
+                    @click="modalOpen = false"
+                    class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100
+                           dark:hover:text-gray-300 dark:hover:bg-slate-700 transition-colors"
+                    aria-label="Tutup">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <form action="{{ route('peminjaman.pinjam')}}" method="POST">
+
+            {{-- Form --}}
+            <form
+                method="POST"
+                action="{{ route('peminjaman.pinjam') }}"
+                x-data="{ loading: false }"
+                @submit="loading = true"
+            >
                 @csrf
-                <div class="d-none"><input type="hidden" name="kendaraan_id" id="kendaraan_id_input"></div>
-                <div class="modal-body">
-                    <div class="form-group has-icon-left">
-                        <label for="tanggal_waktu">Tanggal & Waktu Peminjaman</label>
-                        <div class="position-relative">
-                            <input type="text" class="form-control" name="tanggal_waktu" placeholder="Pilih rentang waktu" id="tanggal_waktu">
-                            <div class="form-control-icon">
-                                <i class="bi bi-calendar-range"></i>
-                            </div>
+                <input type="hidden" name="kendaraan_id" :value="kendaraanId">
+
+                <div class="px-6 py-5 space-y-4">
+                    {{-- Tanggal pinjam & kembali --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                                Tanggal Pinjam
+                            </label>
+                            <input
+                                type="date"
+                                name="tanggal_pinjam"
+                                x-model="tanggalPinjam"
+                                :min="new Date().toISOString().split('T')[0]"
+                                class="input-field"
+                                required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                                Tanggal Kembali
+                            </label>
+                            <input
+                                type="date"
+                                name="tanggal_kembali"
+                                x-model="tanggalKembali"
+                                :min="tanggalPinjam || new Date().toISOString().split('T')[0]"
+                                class="input-field"
+                                required>
                         </div>
                     </div>
-                    <div class="form-group has-icon-left">
-                        <label for="tujuan_pinjam">Tujuan Meminjam</label>
-                        <div class="position-relative">
-                            <input type="text" class="form-control" name="tujuan" placeholder="Masukan Tujuan Meminjam kendaraan"
-                                id="tujuan_pinjam">
-                            <div class="form-control-icon">
-                                <i class="bi bi-card-checklist"></i>
-                            </div>
-                        </div>
+
+                    {{-- Tujuan --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                            Tujuan Peminjaman
+                        </label>
+                        <input
+                            type="text"
+                            name="tujuan"
+                            x-model="tujuan"
+                            class="input-field"
+                            placeholder="Perjalanan dinas ke..."
+                            maxlength="255"
+                            required>
+                    </div>
+
+                    {{-- Keterangan (opsional) --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                            Keterangan
+                            <span class="text-gray-400 font-normal">(opsional)</span>
+                        </label>
+                        <textarea
+                            name="keterangan"
+                            x-model="keterangan"
+                            rows="3"
+                            class="input-field resize-none"
+                            placeholder="Catatan tambahan..."></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
-                        <span class="d-none d-sm-block">Menutup</span>
+
+                {{-- Footer tombol --}}
+                <div class="flex items-center justify-end gap-3 px-6 py-4
+                            border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
+                    <button
+                        type="button"
+                        @click="modalOpen = false"
+                        class="btn-secondary"
+                        :disabled="loading">
+                        Batal
                     </button>
-                    <button type="submit" class="btn btn-primary ms-1">
-                        <span class="d-none d-sm-block">Kirim</span>
+                    <button
+                        type="submit"
+                        class="btn-primary flex items-center gap-2"
+                        :disabled="loading">
+                        <svg x-show="loading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        <span x-text="loading ? 'Memproses...' : 'Ajukan Peminjaman'"></span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
-</div>
-<script src="/assets/extensions/flatpickr/flatpickr.min.js"></script>
-<script src="/assets/extensions/flatpickr/plugins/confirmDate/confirmDate.js"></script>
-<script>
-    function openDatePicker(e){var t=document.getElementById("inlineForm"),n=document.getElementById("kendaraan_id_input"),i=new bootstrap.Modal(t);t.removeAttribute("inert"),i.show(),n.value=e,console.log(e)}flatpickr("#tanggal_waktu",{enableTime:!0,dateFormat:"Y-m-d H:i",minDate:"today",mode:"range",time_24hr:!0,plugins:[new confirmDatePlugin({})]}),document.querySelector("#inlineForm").addEventListener("hidden.bs.modal",(function(){this.setAttribute("inert","true")}));
-</script>
-@endif
 
-<script src="/assets/extensions/datatables.net/js/jquery.js"></script>
-<script src="/assets/extensions/datatables.net/js/jquery.dataTables.js"></script>
-<script src="/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
-<script>
-    let dataTable = new DataTable(document.getElementById("table1"), { scrollX: !0 }); function adaptPageDropdown() { let a = dataTable.wrapper.querySelector(".dataTable-selector"); a.parentNode.parentNode.insertBefore(a, a.parentNode), a.classList.add("form-select") } function adaptPagination() { let a = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list"); a.forEach(a => a.classList.add("pagination", "pagination-primary")); let e = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li"); e.forEach(a => a.classList.add("page-item")); let t = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li a"); t.forEach(a => a.classList.add("page-link")) } const refreshPagination = () => adaptPagination(); dataTable.on("datatable.init", () => { adaptPageDropdown(), refreshPagination() }), dataTable.on("datatable.update", refreshPagination), dataTable.on("datatable.sort", refreshPagination), dataTable.on("datatable.page", adaptPagination);
-</script>
+</div>
 @endsection

@@ -19,7 +19,7 @@
                 <!-- Logo -->
                 <div class="flex items-center space-x-3">
                     <div class="h-10 w-10 rounded-lg shadow-md overflow-hidden bg-white flex items-center justify-center">
-                        <img src="/assets/static/images/logo/kupinjam-full.png" 
+                        <img src="/images/logo/kupinjam-full.png" 
                              alt="KuPinjam Logo" class="h-full w-full object-cover bg-size-[400%]">
                     </div>
                     <div class="flex flex-col">
@@ -173,7 +173,7 @@
                     <div class="aspect-w-3 aspect-h-4 lg:aspect-w-1 lg:aspect-h-1">
                         <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-3xl transform rotate-3 shadow-2xl"></div>
                         <div class="relative bg-white rounded-3xl shadow-2xl p-8 transform -rotate-1">
-                            <img src="/assets/static/images/logo/logo-min-1.png" 
+                            <img src="/images/logo/logo-min-1.png" 
                                  alt="KuPinjam Vehicle System" 
                                  class="w-full h-full object-contain filter drop-shadow-lg">
                         </div>
@@ -409,7 +409,7 @@
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-3 mb-4">
                         <div class="h-10 w-10 rounded-lg overflow-hidden bg-white flex items-center justify-center">
-                            <img src="/assets/static/images/logo/kupinjam.webp" 
+                            <img src="/images/logo/kupinjam.webp" 
                                  alt="KuPinjam Logo" class="h-full w-full object-cover">
                         </div>
                         <div>
@@ -469,7 +469,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="/assets/extensions/sweetalert2/sweetalert2.all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');

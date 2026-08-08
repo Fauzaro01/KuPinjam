@@ -1,102 +1,93 @@
-@extends('layouts/default-dashboard')
+@extends('layouts.default-dashboard')
 
-@section('title', 'Daftar Pengguna')
-
-@section('head-css')
-<link rel="stylesheet" crossorigin="" href="/assets/compiled/css/table-datatable.css">
-@endsection
+@section('title', 'Manajemen User')
 
 @section('content')
-<div class="page-heading">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>KuPinjam</h3>
-                <p class="text-subtitle text-muted">List Pengguna yang terdaftar pada layanan KuPinjam</p>
-            </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Pengelola Pengguna</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Daftar Pengguna</li>
-                    </ol>
-                </nav>
-            </div>
+<div class="space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Manajemen User</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Kelola semua akun pengguna sistem</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('usermanagement.bulkcreate') }}" class="btn-secondary flex items-center gap-2 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                Import CSV
+            </a>
+            <a href="{{ route('usermanagement.create') }}" class="btn-primary flex items-center gap-2 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Tambah User
+            </a>
         </div>
     </div>
-    <section class="section">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">Daftar Pengguna KuPinjam</h4>
-            </div>
-            <div class="card-body">
-                @if(session('success'))
-                <div class="alert alert-light-success color-success alert-dismissible show fade">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                @elseif(session('error'))
-                <div class="alert alert-danger">
-                    <div class="alert alert-light-danger color-danger alert-dismissible show fade">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </div>
-                @endif
-                <table class="table table-striped dataTable-table" id="table1" width="100%">
-                    <thead>
+
+    <div class="card">
+        <div class="table-container">
+            <table class="table-base datatable">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>No. Telp</th>
+                        <th>Role</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($users as $user)
                         <tr>
-                            <th><a class="dataTable-sorter">ID</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Username</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Email</a>
-                            </th>
-                            <th><a class="dataTable-sorter">No Telp</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Role</a>
-                            </th>
-                            <th><a class="dataTable-sorter">Aksi</a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($users as $user)
-                        <tr>
-                            <td>{{$user['id']}}</td>
-                            <td>{{$user['username']}}</td>
-                            <td>{{$user['email']}}</td>
-                            <td>{{$user['no_telp']}}</td>
                             <td>
-                                @if($user['role'] == 'karyawan')
-                                <span class="badge bg-success">Karyawan</span>
+                                <div class="flex items-center gap-3">
+                                    @if($user->avatar)
+                                        <img src="{{ Storage::url($user->avatar) }}"
+                                             class="w-8 h-8 rounded-full object-cover flex-shrink-0" alt="Avatar">
+                                    @else
+                                        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                            <span class="text-white text-xs font-semibold">
+                                                {{ strtoupper(substr($user->username, 0, 1)) }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                    <span class="font-medium">{{ $user->username }}</span>
+                                </div>
+                            </td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->no_telp }}</td>
+                            <td>
+                                @if($user->role === 'administrator')
+                                    <span class="badge-blue capitalize">{{ $user->role }}</span>
                                 @else
-                                <span class="badge bg-warning">Administrator</span>
+                                    <span class="badge-gray capitalize">{{ $user->role }}</span>
                                 @endif
                             </td>
                             <td>
-                                <a class="btn btn-sm btn-warning" href="{{ route('usermanagement.edit', $user) }}"><i
-                                        class="bi bi-pencil-square"></i></a>
-                                <form action="{{ route('usermanagement.destroy', $user->id) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger" type="submit"
-                                        onclick="return confirm('Yakin ingin menghapus pengguna ini?')"><i
-                                            class="bi bi-trash3"></i></button>
-                                </form>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('usermanagement.edit', $user->id) }}"
+                                       class="btn-secondary text-xs py-1 px-3">Edit</a>
+                                    @if(Auth::user()->id !== $user->id)
+                                        <form method="POST"
+                                              action="{{ route('usermanagement.destroy', $user->id) }}"
+                                              onsubmit="return confirm('Hapus user {{ $user->username }}?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn-danger text-xs py-1 px-3">Hapus</button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
-                            @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-8 text-gray-400">Belum ada data user.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
 </div>
-<script src="/assets/extensions/datatables.net/js/jquery.js"></script>
-<script src="/assets/extensions/datatables.net/js/jquery.dataTables.js"></script>
-<script src="/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
-<script>
-    let dataTable = new DataTable(document.getElementById("table1"), { scrollX: !0 }); function adaptPageDropdown() { let a = dataTable.wrapper.querySelector(".dataTable-selector"); a.parentNode.parentNode.insertBefore(a, a.parentNode), a.classList.add("form-select") } function adaptPagination() { let a = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list"); a.forEach(a => a.classList.add("pagination", "pagination-primary")); let e = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li"); e.forEach(a => a.classList.add("page-item")); let t = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li a"); t.forEach(a => a.classList.add("page-link")) } const refreshPagination = () => adaptPagination(); dataTable.on("datatable.init", () => { adaptPageDropdown(), refreshPagination() }), dataTable.on("datatable.update", refreshPagination), dataTable.on("datatable.sort", refreshPagination), dataTable.on("datatable.page", adaptPagination);
-</script>
 @endsection

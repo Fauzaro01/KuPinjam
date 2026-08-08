@@ -1,271 +1,253 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.default-dashboard')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - KuPinjam</title>
+@section('title', 'Dashboard')
 
-    <link rel="shortcut icon" href="favicon.ico" type="image/png">
+@section('content')
+<div class="space-y-6">
 
-    <link rel="stylesheet" crossorigin href="/assets/compiled/css/app.css">
-    <link rel="stylesheet" crossorigin href="/assets/compiled/css/app-dark.css">
-    <link rel="stylesheet" crossorigin href="/assets/compiled/css/iconly.css">
-    <link rel="stylesheet" crossorigin="" href="/assets/compiled/css/table-datatable.css">
-</head>
-
-<body>
-    <script src="/assets/static/js/initTheme.js"></script>
-    <div id="app">
-        @include("layouts/sidebar-dashboard")
-        <div id="main">
-            <header class="mb-3">
-                <a href="#" class="burger-btn d-block d-xl-none">
-                    <i class="bi bi-justify fs-3"></i>
-                </a>
-            </header>
-
-            <div class="page-heading">
-                <h3>Dashboard</h3>
-            </div>
-            <div class="page-content">
-                @if ($message = Session::get('success'))
-                <div class="alert alert-light-primary color-success">
-                    <i class="bi bi-person-check"></i>
-                    {{ $message }}
-                </div>
-                @endif
-                <section class="row">
-                    <div class="col-12 col-lg-9">
-                        @if(Auth::user()->hasRole('administrator'))
-                        <div class="row">
-                            <div class="col-6 col-lg-3 col-md-6">
-                                <div class="card">
-                                    <div class="card-body px-4 py-4-5">
-                                        <div class="row">
-                                            <div
-                                                class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                                <div class="stats-icon blue mb-2">
-                                                    <i class="iconly-boldProfile"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                                <h6 class="text-muted font-semibold">Administrator</h6>
-                                                <h6 class="font-extrabold mb-0">{{$users->where('role',
-                                                    'administrator')->count()}}</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-lg-3 col-md-6">
-                                <div class="card">
-                                    <div class="card-body px-4 py-4-5">
-                                        <div class="row">
-                                            <div
-                                                class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                                <div class="stats-icon green mb-2">
-                                                    <i class="iconly-boldAdd-User"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                                <h6 class="text-muted font-semibold">Karyawan</h6>
-                                                <h6 class="font-extrabold mb-0">{{$users->where('role',
-                                                    'karyawan')->count()}}</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-lg-3 col-md-6">
-                                <div class="card">
-                                    <div class="card-body px-4 py-4-5">
-                                        <div class="row">
-                                            <div
-                                                class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                                <div class="stats-icon red mb-2">
-                                                    <i class="iconly-boldCategory"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                                <h6 class="text-muted font-semibold">Mobil</h6>
-                                                <h6 class="font-extrabold mb-0">{{$kendaraan->where('jenis_kendaraan',
-                                                    'mobil')->count()}}</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-lg-3 col-md-6">
-                                <div class="card">
-                                    <div class="card-body px-4 py-4-5">
-                                        <div class="row">
-                                            <div
-                                                class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                                <div class="stats-icon red mb-2">
-                                                    <i class="iconly-boldCategory"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                                <h6 class="text-muted font-semibold">Motor</h6>
-                                                <h6 class="font-extrabold mb-0">{{$kendaraan->where('jenis_kendaraan',
-                                                    'motor')->count()}}</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        <div class="row">
-                            <div class="col-12">
-                                @if(Auth::user()->hasRole('administrator'))
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h4>Daftar Peminjaman Terbaru</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover mb-0" id="table1">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Nama Peminjam</th>
-                                                        <th>Jenis Kendaraan</th>
-                                                        <th>Plat Nomor</th>
-                                                        <th>Tanggal Pinjam</th>
-                                                        <th>Tanggal Kembali</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($peminjamans as $peminjaman)
-                                                    <tr>
-                                                        <td>{{$peminjaman->id}}</td>
-                                                        <td>{{$peminjaman->user->username}}</td>
-                                                        <td>
-                                                            @if($peminjaman->kendaraan->jenis_kendaraan == 'motor')
-                                                            <span class="badge bg-light-primary">
-                                                                <i class="bi bi-bicycle me-2"></i>
-                                                                Motor
-                                                            </span>
-                                                            @elseif($peminjaman->kendaraan->jenis_kendaraan == 'mobil')
-                                                            <span class="badge bg-light-info">
-                                                                <i class="bi bi-car-front me-2"></i>
-                                                                Mobil
-                                                            </span>
-                                                            @endif
-                                                        </td>
-                                                        <td>{{$peminjaman->kendaraan->plat_nomor}}</td>
-                                                        <td>{{$peminjaman->tanggal_pinjam}}</td>
-                                                        <td>{{$peminjaman->tanggal_kembali}}</td>
-                                                        <td>
-                                                            @if($peminjaman->status_peminjaman == 'selesai')
-                                                            <span class="badge bg-light-success">
-                                                                <i class="bi bi-check2 me-2"></i>
-                                                                Selesai
-                                                            </span>
-                                                            @elseif($peminjaman->status_peminjaman == 'dipinjam')
-                                                            <span class="badge bg-light-warning">
-                                                                <i class="bi bi-cone-striped me-2"></i>
-                                                                DiPinjam
-                                                            </span>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <script src="/assets/extensions/datatables.net/js/jquery.js"></script>
-                                <script src="/assets/extensions/datatables.net/js/jquery.dataTables.js"></script>
-                                <script src="/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
-                                <script>
-                                    let dataTable = new DataTable(document.getElementById("table1"), { scrollX: !0 }); function adaptPageDropdown() { let a = dataTable.wrapper.querySelector(".dataTable-selector"); a.parentNode.parentNode.insertBefore(a, a.parentNode), a.classList.add("form-select") } function adaptPagination() { let a = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list"); a.forEach(a => a.classList.add("pagination", "pagination-primary")); let e = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li"); e.forEach(a => a.classList.add("page-item")); let t = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li a"); t.forEach(a => a.classList.add("page-link")) } const refreshPagination = () => adaptPagination(); dataTable.on("datatable.init", () => { adaptPageDropdown(), refreshPagination() }), dataTable.on("datatable.update", refreshPagination), dataTable.on("datatable.sort", refreshPagination), dataTable.on("datatable.page", adaptPagination);
-                                </script>
-                                @else
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h4>Cara Meminjam Mobil</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="accordion accordion-flush" id="accordionFlushExample">
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="flush-headingOne">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                                        Pergi Halaman Kendaraan
-                                                    </button>
-                                                </h2>
-                                                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample" style="">
-                                                    <div class="accordion-body">Untuk mulai meminjam mobil, silakan tekan tombol "<code>Kendaraan</code>" yang terdapat di sebelah kiri atau pada sidebar platform.</div>
-                                                </div>
-                                            </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="flush-headingTwo">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                                                        Pilih "Pinjam Kendaraan"
-                                                    </button>
-                                                </h2>
-                                                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample" style="">
-                                                    <div class="accordion-body">Setelah itu, klik tombol  "<code>Pinjam Kendaraan</code>" yang muncul setelah memilih mobil yang ingin Anda sewa.</div>
-                                                </div>
-                                            </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="flush-headingThree">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-                                                        Tentukan Rentang Waktu Peminjaman & Tujuan peminjaman
-                                                    </button>
-                                                </h2>
-                                                <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample" style="">
-                                                    <div class="accordion-body">Pilih <code>tanggal mulai</code> dan <code>tanggal akhir</code> untuk peminjaman Anda dengan mudah menggunakan kalender yang tersedia. Jika perlu, masukkan tujuan perjalanan Anda di kolom yang disediakan.</div>
-                                                </div>
-                                            </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="flush-headingThree">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
-                                                        Kirim Permintaan
-                                                    </button>
-                                                </h2>
-                                                <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample" style="">
-                                                    <div class="accordion-body">Setelah semua informasi diisi, tekan tombol "<code>Kirim</code>" untuk mengonfirmasi permintaan peminjaman. Permintaan peminjaman Anda sudah terkirim!</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-lg-3">
-                        <div class="card">
-                            <div class="card-body py-4 px-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-xl">
-                                        <img src="/assets/compiled/jpg/{{rand(1,3)}}.jpg" alt="/assets/compiled/jpg/1.jpg">
-                                    </div>
-                                    <div class="ms-3 name">
-                                        <h5 class="font-bold">{{Auth::user()->username}}</h5>
-                                        <h6 class="text-muted mb-0">{{Auth::user()->role}}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            @include('layouts/footer-dashboard')
-        </div>
+    {{-- Page heading --}}
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            Selamat datang, <span class="font-medium text-gray-700 dark:text-gray-300">{{ Auth::user()->username }}</span>
+        </p>
     </div>
-    <script src="/assets/static/js/components/dark.js"></>
-    <script src="/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 
-    <script src="/assets/compiled/js/app.js"></script>
-    <script src="/assets/static/js/pages/dashboard.js"></script>
+    @if(Auth::user()->hasRole('administrator'))
 
-</body>
+        {{-- ===== ADMIN: Stat Cards ===== --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
-</html>
+            {{-- Total Kendaraan --}}
+            <a href="{{ route('kendaraan.index') }}" class="card flex items-center gap-4 hover:shadow-md transition-shadow">
+                <div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h12l2-2V9l-3-5H9"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Total Kendaraan</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $kendaraan->count() }}</p>
+                    <p class="text-xs text-green-600 dark:text-green-400">
+                        {{ $kendaraan->where('status','tersedia')->count() }} tersedia
+                    </p>
+                </div>
+            </a>
+
+            {{-- Peminjaman Aktif --}}
+            <a href="{{ route('peminjaman.index') }}" class="card flex items-center gap-4 hover:shadow-md transition-shadow">
+                <div class="flex-shrink-0 w-12 h-12 bg-yellow-100 dark:bg-yellow-900/40 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Peminjaman Aktif</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ $peminjamans->where('status_peminjaman','dipinjam')->count() }}
+                    </p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500">
+                        {{ $peminjamans->where('status_peminjaman','selesai')->count() }} selesai
+                    </p>
+                </div>
+            </a>
+
+            {{-- Pengembalian Pending --}}
+            <a href="{{ route('pengembalian.index') }}" class="card flex items-center gap-4 hover:shadow-md transition-shadow relative">
+                @if($pendingPengembalian > 0)
+                    <span class="absolute top-3 right-3 inline-flex items-center justify-center w-5 h-5
+                                 rounded-full bg-red-500 text-white text-xs font-bold">
+                        {{ $pendingPengembalian }}
+                    </span>
+                @endif
+                <div class="flex-shrink-0 w-12 h-12 bg-orange-100 dark:bg-orange-900/40 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Perlu Konfirmasi</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $pendingPengembalian }}</p>
+                    <p class="text-xs text-orange-500 dark:text-orange-400">
+                        {{ $pendingPengembalian > 0 ? 'Butuh perhatian' : 'Semua clear' }}
+                    </p>
+                </div>
+            </a>
+
+            {{-- Total User --}}
+            <a href="{{ route('usermanagement.index') }}" class="card flex items-center gap-4 hover:shadow-md transition-shadow">
+                <div class="flex-shrink-0 w-12 h-12 bg-purple-100 dark:bg-purple-900/40 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Total User</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $users->count() }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500">
+                        {{ $users->where('role','karyawan')->count() }} karyawan
+                    </p>
+                </div>
+            </a>
+        </div>
+
+        {{-- Tabel peminjaman aktif terbaru --}}
+        <div class="card">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-gray-900 dark:text-white">Peminjaman Aktif Terbaru</h2>
+                <a href="{{ route('peminjaman.index') }}" class="text-sm text-primary hover:underline">Lihat semua &rarr;</a>
+            </div>
+
+            @php $aktif = $peminjamans->where('status_peminjaman', 'dipinjam')->take(5); @endphp
+
+            @if($aktif->isEmpty())
+                <div class="py-8 text-center text-gray-400 dark:text-gray-500">
+                    <svg class="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                    </svg>
+                    <p class="text-sm">Tidak ada peminjaman aktif.</p>
+                </div>
+            @else
+                <div class="table-container">
+                    <table class="table-base">
+                        <thead>
+                            <tr>
+                                <th>Karyawan</th>
+                                <th>Kendaraan</th>
+                                <th>Tgl Pinjam</th>
+                                <th>Tgl Kembali</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($aktif as $p)
+                                <tr>
+                                    <td class="font-medium">{{ $p->user?->username ?? '-' }}</td>
+                                    <td>
+                                        <div class="font-semibold">{{ $p->kendaraan?->plat_nomor ?? '-' }}</div>
+                                        <div class="text-xs text-gray-400">{{ $p->kendaraan?->merk }} {{ $p->kendaraan?->model }}</div>
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($p->tanggal_pinjam)->format('d/m/Y') }}</td>
+                                    <td>
+                                        @php
+                                            $kembali = \Carbon\Carbon::parse($p->tanggal_kembali);
+                                            $isLate  = $kembali->isPast();
+                                        @endphp
+                                        <span class="{{ $isLate ? 'text-red-500 font-semibold' : '' }}">
+                                            {{ $kembali->format('d/m/Y') }}
+                                        </span>
+                                        @if($isLate)
+                                            <span class="badge-red ml-1">Terlambat</span>
+                                        @endif
+                                    </td>
+                                    <td><span class="badge-yellow">Dipinjam</span></td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+
+    @else
+
+        {{-- ===== KARYAWAN VIEW ===== --}}
+        @php
+            $aktifSaya   = isset($myPeminjamans) ? $myPeminjamans->where('status_peminjaman','dipinjam') : collect();
+            $selesaiSaya = isset($myPeminjamans) ? $myPeminjamans->where('status_peminjaman','selesai')  : collect();
+        @endphp
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <a href="{{ route('kendaraan.index') }}" class="card flex items-center gap-4 hover:shadow-md transition-shadow">
+                <div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h12l2-2V9l-3-5H9"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Pinjam Kendaraan</p>
+                    <p class="text-sm font-medium text-primary">Lihat kendaraan tersedia</p>
+                </div>
+            </a>
+
+            <div class="card flex items-center gap-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-yellow-100 dark:bg-yellow-900/40 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Sedang Dipinjam</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $aktifSaya->count() }}</p>
+                </div>
+            </div>
+
+            <div class="card flex items-center gap-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Selesai</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $selesaiSaya->count() }}</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Peminjaman aktif karyawan --}}
+        @if($aktifSaya->isNotEmpty())
+            <div class="card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-base font-semibold text-gray-900 dark:text-white">Peminjaman Aktif Saya</h2>
+                    <a href="{{ route('peminjaman.index') }}" class="text-sm text-primary hover:underline">Lihat semua &rarr;</a>
+                </div>
+                <div class="table-container">
+                    <table class="table-base">
+                        <thead>
+                            <tr>
+                                <th>Kendaraan</th>
+                                <th>Tgl Pinjam</th>
+                                <th>Tgl Kembali</th>
+                                <th>Status Pengembalian</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($aktifSaya as $p)
+                                <tr>
+                                    <td>
+                                        <div class="font-semibold">{{ $p->kendaraan?->plat_nomor ?? '-' }}</div>
+                                        <div class="text-xs text-gray-400">{{ $p->kendaraan?->merk }} {{ $p->kendaraan?->model }}</div>
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($p->tanggal_pinjam)->format('d/m/Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($p->tanggal_kembali)->format('d/m/Y') }}</td>
+                                    <td>
+                                        @if($p->riwayatPengembalian?->status === 'pending')
+                                            <span class="badge-blue">Menunggu Konfirmasi</span>
+                                        @else
+                                            <span class="badge-gray">Belum diajukan</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
+
+    @endif
+
+</div>
+@endsection

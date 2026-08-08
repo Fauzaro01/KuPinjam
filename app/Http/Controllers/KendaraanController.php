@@ -2,84 +2,68 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreKendaraanRequest;
+use App\Http\Requests\UpdateKendaraanRequest;
 use App\Models\Kendaraan;
-use Illuminate\Support\Facades\Auth;
+use App\Services\KendaraanService;
 use Illuminate\Routing\Controllers\HasMiddleware;
-class KendaraanController extends Controller implements hasMiddleware
+use Illuminate\Support\Facades\Auth;
+
+class KendaraanController extends Controller implements HasMiddleware
 {
-    public static function middleware() {
-        return [
-            'auth'
-        ];
+    public function __construct(
+        protected KendaraanService $kendaraanService
+    ) {}
+
+    public static function middleware(): array
+    {
+        return ['auth'];
     }
 
     public function index()
-    {  
-        if(Auth::user()->hasRole('karyawan')) {
-            return view('kendaraan.main', [
-                'kendaraans' => Kendaraan::where('status', 'tersedia')->get()
-            ]);
-            
-        }
-        return view('kendaraan.main', [
-            'kendaraans' => Kendaraan::all()
-        ]);
-    }
+    {
+        $this->authorize('viewAny', Kendaraan::class);
 
-    public function statistic() {
-        return view('kendaraan.statistic');
+        if (Auth::user()->hasRole('karyawan')) {
+            return view('kendaraan.main', [
+                'kendaraans' => Kendaraan::where('status', 'tersedia')->get(),
+            ]);
+        }
+
+        return view('kendaraan.main', [
+            'kendaraans' => Kendaraan::all(),
+        ]);
     }
 
     public function create()
     {
-        return view("kendaraan.createKendaraan");
+        $this->authorize('create', Kendaraan::class);
+
+        return view('kendaraan.createKendaraan');
     }
 
-    public function store(Request $request) {
-    $request->validate([
-        'plat_nomor' => 'required|string|max:20',
-        'merk' => 'required|string|max:50',
-        'model' => 'required|string|max:50',
-        'tahun' => 'required|integer',
-        'jenis_kendaraan' => 'required|in:mobil,motor',
-    ]);
-
-    Kendaraan::create([
-        'plat_nomor' => $request->plat_nomor,
-        'merk' => $request->merk,
-        'model' => $request->model,
-        'tahun' => $request->tahun,
-        'jenis_kendaraan' => $request->jenis_kendaraan,
-        'status' => "tersedia"
-    ]);
-
-    return redirect()->route('kendaraan.index')->withSuccess('Kendaraan berhasil ditambahkan');
-    }
-
-
-    public function show(string $id)
+    public function store(StoreKendaraanRequest $request)
     {
-        //
+        $this->authorize('create', Kendaraan::class);
+
+        $this->kendaraanService->createKendaraan($request->validated());
+
+        return redirect()->route('kendaraan.index')
+            ->with('success', 'Kendaraan berhasil ditambahkan.');
     }
 
     public function edit(Kendaraan $kendaraan)
     {
+        $this->authorize('update', $kendaraan);
+
         return view('kendaraan.editKendaraan', compact('kendaraan'));
     }
 
-    public function update(Request $request, Kendaraan $kendaraan)
+    public function update(UpdateKendaraanRequest $request, Kendaraan $kendaraan)
     {
-        $request->validate([
-            'plat_nomor' => 'required|max:20',
-            'merk' => 'required|max:50',
-            'model' => 'required|max:50',
-            'tahun' => 'required|integer|between:1900,' . date('Y'),
-            'jenis_kendaraan' => 'required|in:motor,mobil',
-            'status' => 'required|in:tersedia,dipinjam,perawatan',
-        ]);
+        $this->authorize('update', $kendaraan);
 
-        $kendaraan->update($request->all());
+        $this->kendaraanService->updateKendaraan($kendaraan, $request->validated());
 
         return redirect()->route('kendaraan.index')
             ->with('success', 'Kendaraan berhasil diperbarui.');
@@ -87,9 +71,11 @@ class KendaraanController extends Controller implements hasMiddleware
 
     public function destroy(Kendaraan $kendaraan)
     {
-        $kendaraan->delete();
+        $this->authorize('delete', $kendaraan);
 
-        return redirect()->route('kendaraan.index')->with('success', 'Kendaraan berhasil dihapus.');
+        $this->kendaraanService->deleteKendaraan($kendaraan);
+
+        return redirect()->route('kendaraan.index')
+            ->with('success', 'Kendaraan berhasil dihapus.');
     }
-
 }

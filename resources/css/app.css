@@ -1,3 +1,84 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-sans;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors duration-200 font-medium;
+    }
+
+    .btn-secondary {
+        @apply bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-medium dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-500;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium;
+    }
+
+    .btn-success {
+        @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium;
+    }
+
+    .input-field {
+        @apply w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition
+               dark:bg-slate-700 dark:border-slate-600 dark:text-gray-100 dark:focus:ring-primary-dark;
+    }
+
+    .card {
+        @apply bg-white dark:bg-slate-800 rounded-xl shadow p-6;
+    }
+
+    .table-container {
+        @apply overflow-x-auto rounded-xl shadow;
+    }
+
+    .table-base {
+        @apply w-full text-sm text-left text-gray-700 dark:text-gray-300;
+    }
+
+    .table-base thead {
+        @apply bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-300 uppercase text-xs;
+    }
+
+    .table-base th {
+        @apply px-4 py-3 font-semibold;
+    }
+
+    .table-base td {
+        @apply px-4 py-3 border-t border-gray-100 dark:border-slate-700;
+    }
+
+    .table-base tbody tr {
+        @apply bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-150;
+    }
+
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    .badge-green {
+        @apply badge bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+    }
+
+    .badge-red {
+        @apply badge bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200;
+    }
+
+    .badge-yellow {
+        @apply badge bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200;
+    }
+
+    .badge-blue {
+        @apply badge bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
+    }
+
+    .badge-gray {
+        @apply badge bg-gray-100 text-gray-800 dark:bg-slate-600 dark:text-gray-200;
+    }
+}

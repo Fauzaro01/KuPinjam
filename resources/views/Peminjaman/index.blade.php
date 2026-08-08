@@ -1,189 +1,139 @@
-@extends('layouts/default-dashboard')
+@extends('layouts.default-dashboard')
 
-@section('title', 'Riwayat Peminjaman Kendaraan')
-
-@section('head-css')
-<link rel="stylesheet" crossorigin="" href="/assets/compiled/css/table-datatable.css">
-@endsection
+@section('title', 'Peminjaman')
 
 @section('content')
-<div class="page-heading">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>KuPinjam</h3>
-                <p class="text-subtitle text-muted">List Riwayat Peminjaman yang ada pada layanan KuPinjam</p>
-            </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Peminjaman</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Riwayat Peminjaman Kendaraan</li>
-                    </ol>
-                </nav>
-            </div>
+<div class="space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Peminjaman</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                {{ Auth::user()->hasRole('administrator') ? 'Semua data peminjaman' : 'Riwayat peminjaman Anda' }}
+            </p>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+            @if(Auth::user()->hasRole('administrator'))
+                <a href="{{ route('peminjaman.export-csv') }}"
+                   class="btn-secondary flex items-center gap-2 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    Export CSV
+                </a>
+                <a href="{{ route('peminjaman.create') }}" class="btn-primary flex items-center gap-2 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Buat Peminjaman
+                </a>
+            @endif
         </div>
     </div>
-    <section class="section">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">Riwayat Peminjaman {{(Auth::user()->hasRole('administrator') ? "Kendaraan" : "Anda")}}</h4>
-            </div>
-            <div class="card-body">
-                @if(session('success'))
-                <div class="alert alert-light-success color-success alert-dismissible show fade">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                @elseif(session('error'))
-                <div class="alert alert-danger">
-                    <div class="alert alert-light-danger color-danger alert-dismissible show fade">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </div>
-                @endif
-                <table class="table table-striped dataTable-table" id="table1" width="100%">
-                    <thead>
+
+    <div class="card">
+        <div class="table-container">
+            <table class="table-base datatable">
+                <thead>
+                    <tr>
                         @if(Auth::user()->hasRole('administrator'))
-                            <tr>
-                                <th><a class="dataTable-sorter">ID</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Username</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Plat Kendaraan</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Jenis</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Tanggal Pinjam</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Tanggal Kembali</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Tujuan</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Status</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Aksi</a>
-                                </th>
-                            </tr>
-                        @else
-                            <tr>
-                                <th><a class="dataTable-sorter">Merek</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Plat Kendaraan</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Jenis Kendaraan</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Tanggal Pinjam</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Tanggal Kembali</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Tujuan</a>
-                                </th>
-                                <th><a class="dataTable-sorter">Status</a>
-                                </th>
-                            </tr>
+                            <th>Karyawan</th>
                         @endif
-                    </thead>
-                    <tbody>
-                        @if(Auth::user()->hasRole('administrator'))
-                            @foreach($peminjamans as $peminjaman)
-                            <tr>
-                                <td>{{$peminjaman->id}}</td>
-                                <td>{{$peminjaman->user->username}}</td>
-                                <td>{{$peminjaman->kendaraan->plat_nomor}}</td>
-                                <td>
-                                    @if($peminjaman->kendaraan->jenis_kendaraan == 'motor')
-                                    <span class="badge bg-light-primary">
-                                        <i class="bi bi-bicycle me-2"></i>
-                                        Motor
-                                    </span>
-                                    @elseif($peminjaman->kendaraan->jenis_kendaraan == 'mobil')
-                                    <span class="badge bg-light-info">
-                                        <i class="bi bi-car-front me-2"></i>
-                                        Mobil
-                                    </span>
-                                    @endif
-                                </td>
-                                <td>{{$peminjaman->tanggal_pinjam}}</td>
-                                <td>{{$peminjaman->tanggal_kembali}}</td>
-                                <td>{{$peminjaman->tujuan}}</td>
-                                <td>
-                                        @if($peminjaman->status_peminjaman == 'selesai')
-                                        <span class="badge bg-light-success">
-                                            <i class="bi bi-check2 me-2"></i>
-                                            Selesai
-                                        </span>
-                                        @elseif($peminjaman->status_peminjaman == 'dipinjam')
-                                        <span class="badge bg-light-warning">
-                                            <i class="bi bi-cone-striped me-2"></i>
-                                            DiPinjam
-                                        </span>
+                        <th>Kendaraan</th>
+                        <th>Tgl Pinjam</th>
+                        <th>Tgl Kembali</th>
+                        <th>Tujuan</th>
+                        <th>Status Peminjaman</th>
+                        <th>Status Pengembalian</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($peminjamans as $p)
+                        <tr>
+                            @if(Auth::user()->hasRole('administrator'))
+                                <td class="font-medium">{{ $p->user?->username ?? '-' }}</td>
+                            @endif
+                            <td>
+                                <div class="font-semibold">{{ $p->kendaraan?->plat_nomor ?? '-' }}</div>
+                                <div class="text-xs text-gray-400">{{ $p->kendaraan?->merk }} {{ $p->kendaraan?->model }}</div>
+                            </td>
+                            <td>{{ \Carbon\Carbon::parse($p->tanggal_pinjam)->format('d/m/Y') }}</td>
+                            <td>
+                                @php $kembali = \Carbon\Carbon::parse($p->tanggal_kembali); @endphp
+                                <span class="{{ ($kembali->isPast() && $p->status_peminjaman === 'dipinjam') ? 'text-red-500 font-semibold' : '' }}">
+                                    {{ $kembali->format('d/m/Y') }}
+                                </span>
+                            </td>
+                            <td class="max-w-xs truncate">{{ $p->tujuan }}</td>
+                            <td>
+                                @if($p->status_peminjaman === 'dipinjam')
+                                    <span class="badge-yellow">Dipinjam</span>
+                                @else
+                                    <span class="badge-green">Selesai</span>
+                                @endif
+                            </td>
+
+                            {{-- ── Kolom Status Pengembalian (Task 34) ── --}}
+                            <td>
+                                @if($p->riwayatPengembalian?->status === 'pending')
+                                    <span class="badge-yellow">Menunggu Konfirmasi</span>
+                                @elseif($p->riwayatPengembalian?->status === 'dikonfirmasi')
+                                    <span class="badge-green">Selesai</span>
+                                @elseif($p->riwayatPengembalian?->status === 'ditolak')
+                                    <div>
+                                        <span class="badge-red">Ditolak</span>
+                                        @if(Auth::user()->hasRole('karyawan') && $p->user_id === Auth::id() && $p->status_peminjaman === 'dipinjam')
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Bisa ajukan ulang</p>
                                         @endif
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-1">
-                                        <a class="btn btn-sm btn-warning" href="{{ route('peminjaman.edit', $peminjaman) }}"><i
-                                            class="bi bi-pencil-square"></i></a>
-                                    <form action="{{ route('peminjaman.destroy', $peminjaman->id) }}" method="POST"
-                                        style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger" type="submit"
-                                            onclick="return confirm('Yakin ingin menghapus Peminjaman ini?')"><i
-                                                class="bi bi-trash3"></i></button>
-                                    </form>
                                     </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        @else
-                            @foreach($peminjamans as $peminjaman)
-                            <tr>
-                                <td>{{$peminjaman->kendaraan->merk}}</td>
-                                <td>{{$peminjaman->kendaraan->plat_nomor}}</td>
-                                <td>
-                                    @if($peminjaman->kendaraan->jenis_kendaraan == 'motor')
-                                        <span class="badge bg-light-primary">
-                                            <i class="bi bi-bicycle me-2"></i>
-                                            Motor
-                                        </span>
-                                    @elseif($peminjaman->kendaraan->jenis_kendaraan == 'mobil')
-                                        <span class="badge bg-light-info">
-                                            <i class="bi bi-car-front me-2"></i>
-                                            Mobil
-                                        </span>
-                                        @endif
-                                    </td>
-                                    <td>{{$peminjaman->tanggal_pinjam}}</td>
-                                    <td>{{$peminjaman->tanggal_kembali}}</td>
-                                    <td><span class="badge bg-light-primary">{{$peminjaman->tujuan}}</span></td>
-                                    <td>
-                                        @if($peminjaman->status_peminjaman == 'selesai')
-                                        <span class="badge bg-light-success">
-                                            <i class="bi bi-check2 me-2"></i>
-                                            Selesai
-                                        </span>
-                                        @elseif($peminjaman->status_peminjaman == 'dipinjam')
-                                        <span class="badge bg-light-warning">
-                                            <i class="bi bi-cone-striped me-2"></i>
-                                            DiPinjam
-                                        </span>
-                                        @endif
-                                    </td>
-                            </tr>
-                            @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+                                @elseif($p->status_peminjaman === 'dipinjam')
+                                    @can('ajukanPengembalian', $p)
+                                        {{-- Tombol ajukan (Task 34.2) --}}
+                                        <form method="POST"
+                                              action="{{ route('pengembalian.ajukan', $p) }}"
+                                              x-data="{ loading: false }"
+                                              @submit="loading = true">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="btn-success text-xs py-1 px-3"
+                                                    :disabled="loading">
+                                                <svg x-show="loading" class="inline w-3 h-3 mr-1 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                                </svg>
+                                                <span x-text="loading ? 'Memproses...' : 'Kembalikan'">Kembalikan</span>
+                                            </button>
+                                        </form>
+                                    @endcan
+                                @else
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">&mdash;</span>
+                                @endif
+                            </td>
+
+                            {{-- ── Kolom Aksi (admin only) ── --}}
+                            <td>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    @can('update', $p)
+                                        <a href="{{ route('peminjaman.edit', $p) }}"
+                                           class="btn-secondary text-xs py-1 px-3">Edit</a>
+                                        <form method="POST" action="{{ route('peminjaman.destroy', $p) }}"
+                                              onsubmit="return confirm('Hapus peminjaman ini?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn-danger text-xs py-1 px-3">Hapus</button>
+                                        </form>
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="text-center py-8 text-gray-400">Belum ada data peminjaman.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
 </div>
-<script src="/assets/extensions/datatables.net/js/jquery.js"></script>
-<script src="/assets/extensions/datatables.net/js/jquery.dataTables.js"></script>
-<script src="/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
-<script>
-    let dataTable = new DataTable(document.getElementById("table1"), { scrollX: !0 }); function adaptPageDropdown() { let a = dataTable.wrapper.querySelector(".dataTable-selector"); a.parentNode.parentNode.insertBefore(a, a.parentNode), a.classList.add("form-select") } function adaptPagination() { let a = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list"); a.forEach(a => a.classList.add("pagination", "pagination-primary")); let e = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li"); e.forEach(a => a.classList.add("page-item")); let t = dataTable.wrapper.querySelectorAll("ul.dataTable-pagination-list li a"); t.forEach(a => a.classList.add("page-link")) } const refreshPagination = () => adaptPagination(); dataTable.on("datatable.init", () => { adaptPageDropdown(), refreshPagination() }), dataTable.on("datatable.update", refreshPagination), dataTable.on("datatable.sort", refreshPagination), dataTable.on("datatable.page", adaptPagination);
-</script>
 @endsection

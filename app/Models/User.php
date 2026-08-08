@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -23,12 +24,13 @@ class User extends Authenticatable
         'email',
         'no_telp',
         'password',
-        'role'
+        'role',
+        'avatar',
     ];
 
     public $incrementing = false;
-    protected $keyType = 'string'; 
-    
+    protected $keyType = 'string';
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -65,7 +67,8 @@ class User extends Authenticatable
         return $this->role === $roles;
     }
 
-    public function peminjamans() {
-        return $this->hasMany(peminjamans::class);
+    public function peminjamans(): HasMany
+    {
+        return $this->hasMany(Peminjaman::class);
     }
 }

@@ -33,7 +33,7 @@ class AuthController extends Controller implements HasMiddleware
         $req->validate([
             "username" => "required|max:250",
             "email" => "required|max:250|unique:users",
-            "no_telp" => "required|integer|unique:users",
+            "no_telp" => "required|numeric|unique:users",
             "password" => "required|min:8|confirmed",
         ]);
 
@@ -79,14 +79,25 @@ class AuthController extends Controller implements HasMiddleware
     public function dashboard() {
         if (Auth::check()) {
             if (Auth::user()->hasRole('administrator')) {
+                $pendingPengembalian = \App\Models\RiwayatPengembalian::where('status', 'pending')->count();
+
                 return view('dashboard.main', [
-                    'users' => User::all(),
-                    'kendaraan' => Kendaraan::all(),
-                    'peminjamans' => Peminjaman::with(['user', 'kendaraan'])->get(),
+                    'users'               => \App\Models\User::all(),
+                    'kendaraan'           => \App\Models\Kendaraan::all(),
+                    'peminjamans'         => \App\Models\Peminjaman::with(['user', 'kendaraan'])->get(),
+                    'pendingPengembalian' => $pendingPengembalian,
                 ]);
             }
 
-            return view('dashboard.main');
+            // Karyawan: hanya data milik sendiri
+            $myPeminjamans = \App\Models\Peminjaman::with(['kendaraan', 'riwayatPengembalian'])
+                ->where('user_id', Auth::id())
+                ->latest()
+                ->get();
+
+            return view('dashboard.main', [
+                'myPeminjamans' => $myPeminjamans,
+            ]);
         }
 
         return redirect()->route('login')
@@ -122,7 +133,7 @@ class AuthController extends Controller implements HasMiddleware
 
         if (!Hash::check($request->current_password, Auth::user()->password)) {
             return redirect()->back()->with([
-                'eror' => 'Password saat ini tidak valid.',
+                'error' => 'Password saat ini tidak valid.',
             ]);
         }
 

@@ -25,11 +25,6 @@ class Kendaraan extends Model
         return $this->hasMany(Peminjaman::class);
     }
 
-    public function getStatusAttribute($value)
-    {
-        return ucfirst($value);
-    }
-
     public function scopeTersedia($query)
     {
         return $query->where('status', 'tersedia');

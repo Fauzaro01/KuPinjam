@@ -1,207 +1,175 @@
-<div id="sidebar">
-    <div class="sidebar-wrapper active">
-        <div class="sidebar-header position-relative">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="logo">
-                    <a href="{{route('home')}}"><img style="width:120px; height:120px;user-select:none;"
-                            src="/assets/static/images/logo/kupinjam.webp" alt="Logo" srcset="" /></a>
-                </div>
-                <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                        aria-hidden="true" role="img" class="iconify iconify--system-uicons" width="20" height="20"
-                        preserveAspectRatio="xMidYMid meet" viewBox="0 0 21 21">
-                        <g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path
-                                d="M10.5 14.5c2.219 0 4-1.763 4-3.982a4.003 4.003 0 0 0-4-4.018c-2.219 0-4 1.781-4 4c0 2.219 1.781 4 4 4zM4.136 4.136L5.55 5.55m9.9 9.9l1.414 1.414M1.5 10.5h2m14 0h2M4.135 16.863L5.55 15.45m9.899-9.9l1.414-1.415M10.5 19.5v-2m0-14v-2"
-                                opacity=".3"></path>
-                            <g transform="translate(-210 -1)">
-                                <path d="M220.5 2.5v2m6.5.5l-1.5 1.5"></path>
-                                <circle cx="220.5" cy="11.5" r="4"></circle>
-                                <path d="m214 5l1.5 1.5m5 14v-2m6.5-.5l-1.5-1.5M214 18l1.5-1.5m-4-5h2m14 0h2"></path>
-                            </g>
-                        </g>
-                    </svg>
-                    <div class="form-check form-switch fs-6">
-                        <input class="form-check-input me-0" type="checkbox" id="toggle-dark" style="cursor: pointer" />
-                        <label class="form-check-label"></label>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                        aria-hidden="true" role="img" class="iconify iconify--mdi" width="20" height="20"
-                        preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                            d="m17.75 4.09l-2.53 1.94l.91 3.06l-2.63-1.81l-2.63 1.81l.91-3.06l-2.53-1.94L12.44 4l1.06-3l1.06 3l3.19.09m3.5 6.91l-1.64 1.25l.59 1.98l-1.7-1.17l-1.7 1.17l.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95l2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85c-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14c.4-.4.82-.76 1.27-1.08c.75-.53 1.93.36 1.85 1.19c-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82c-2.81 3.14-2.7 7.96.31 10.98c3.02 3.01 7.84 3.12 10.98.31Z">
-                        </path>
-                    </svg>
-                </div>
-                <div class="sidebar-toggler x">
-                    <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
-                </div>
-            </div>
+{{-- Overlay untuk mobile --}}
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden"></div>
+
+{{-- Sidebar --}}
+<aside
+    id="sidebar"
+    class="fixed inset-y-0 left-0 z-30 w-64 bg-slate-800 dark:bg-slate-900 text-white
+           flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out
+           lg:relative lg:translate-x-0 lg:flex"
+>
+    {{-- Logo --}}
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-700">
+        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h12l2-2V9l-3-5H9"/>
+            </svg>
         </div>
-        <div class="sidebar-menu">
-            <ul class="menu">
-                <li class="sidebar-title">Menu</li>
-                <li class="sidebar-item {{ (request()->is('dashboard')) ? 'active' : '' }}">
-                    <a href="{{route('dashboard')}}" class="sidebar-link">
-                        <i class="bi bi-grid-fill"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                @if(Auth::user()->hasRole('karyawan'))
-                    <li class="sidebar-item {{ (request()->is('kendaraan')) ? 'active' : '' }}">
-                        <a href="{{route('kendaraan.index')}}" class="sidebar-link">
-                            <i class="bi bi-car-front"></i>
-                            <span>Kendaraan</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item {{ (request()->is('peminjaman')) ? 'active' : '' }}">
-                        <a href="{{route('peminjaman.index')}}" class="sidebar-link">
-                            <i class="bi bi-bicycle"></i>
-                            <span>Riwayat Peminjaman</span>
-                        </a>
-                    </li>
-                @elseif(Auth::user()->hasRole('administrator'))
-                    <li class="sidebar-item {{ (request()->is('kendaraan*'))  ? 'active' : ''}} has-sub">
-                        <a href="#" class="sidebar-link">
-                            <i class="bi bi-stack"></i>
-                            <span>Kendaraan</span>
-                        </a>
-                        <ul class="submenu {{ (request()->is('kendaraan*')) ? 'active' : ''}}">
-                            <li class="submenu-item {{ (request()->is('kendaraan')) ? 'active' : ''}}">
-                                <a href="{{route('kendaraan.index')}}" class="submenu-link">Daftar Kendaraan</a>
-                            </li>
-                            <li class="submenu-item {{ (request()->is('kendaraan/create')) ? 'active' : ''}}">
-                                <a href="{{route('kendaraan.create')}} " class="submenu-link">Tambah Kendaraan</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-item {{ (request()->is('peminjaman')) ? 'active' : '' }} has-sub">
-                        <a href="#" class="sidebar-link">
-                            <i class="bi bi-collection-fill"></i>
-                            <span>Kelola Peminjaman</span>
-                        </a>
-                        <ul class="submenu {{ (request()->is('peminjaman')) ? 'active' : '' }}">
-                            <li class="submenu-item {{ (request()->is('peminjaman/index')) ? 'active' : ''}}">
-                                <a href="{{route('peminjaman.index')}}" class="submenu-link">Daftar Peminjaman</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-item {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}} has-sub">
-                        <a href="#" class="sidebar-link">
-                            <i class="bi bi-people-fill"></i>
-                            <span>Pengelola Pengguna</span>
-                        </a>
-                        <ul class="submenu {{ (request()->is('admin/usermanagement*'))  ? 'active' : ''}}">
-                            <li class="submenu-item {{ (request()->is('admin/usermanagement'))  ? 'active' : ''}}">
-                                <a href="{{route('usermanagement.index')}}" class="submenu-link">Daftar Pengguna</a>
-                            </li>
-                            <li class="submenu-item {{ (request()->is('admin/usermanagement/create'))  ? 'active' : ''}}">
-                                <a href="{{route('usermanagement.create')}}" class="submenu-link">Registrasi Pengguna</a>
-                            </li>
-                            <li class="submenu-item {{ (request()->is('admin/usermanagement/bulkcreate'))  ? 'active' : ''}}">
-                                <a href="{{route('usermanagement.bulkcreate')}}" class="submenu-link">Registrasi Pengguna
-                                    Masal</a>
-                            </li>
-                        </ul>
-                    </li>
+        <span class="text-lg font-bold tracking-tight">KuPinjam</span>
+    </div>
+
+    {{-- Navigation --}}
+    <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+
+        {{-- Dashboard --}}
+        <a href="{{ route('dashboard') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                  {{ request()->routeIs('dashboard') ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
+        </a>
+
+        {{-- Kendaraan --}}
+        <a href="{{ route('kendaraan.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                  {{ request()->routeIs('kendaraan.*') ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h12l2-2V9l-3-5H9"/>
+            </svg>
+            Kendaraan
+        </a>
+
+        {{-- Peminjaman --}}
+        <a href="{{ route('peminjaman.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                  {{ request()->routeIs('peminjaman.*') ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Peminjaman
+        </a>
+
+        {{-- Menu khusus Administrator --}}
+        @if(Auth::user()->hasRole('administrator'))
+            {{-- Pengembalian --}}
+            <a href="{{ route('pengembalian.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                      {{ request()->routeIs('pengembalian.*') ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                </svg>
+                <span class="flex-1">Pengembalian</span>
+                @php $pendingSidebar = \App\Models\RiwayatPengembalian::where('status','pending')->count(); @endphp
+                @if($pendingSidebar > 0)
+                    <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1
+                                 rounded-full bg-red-500 text-white text-xs font-bold leading-none">
+                        {{ $pendingSidebar }}
+                    </span>
                 @endif
-                <li class="sidebar-title">Setelan</li>
-                <li class="sidebar-item">
-                    <a type="button" data-bs-toggle="modal" data-bs-target="#default" class="sidebar-link">
-                        <i class="bi bi-life-preserver"></i>
-                        <span>Developer</span>
-                    </a>
-                </li>
-                <li class="sidebar-item {{ (request()->is('account-security')) ? 'active' : ''}}">
-                    <a href="{{route('accountSecurity')}}" class="sidebar-link">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Account Security</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('logout') }}" onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();"><i class="bi bi-x"></i>
-                        <span>Logout</span></a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                        @csrf
-                    </form>
-                </li>
-            </ul>
+            </a>
+
+            {{-- User Management --}}
+            <a href="{{ route('usermanagement.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                      {{ request()->routeIs('usermanagement.*') ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                Manajemen User
+            </a>
+        @endif
+
+        {{-- Divider --}}
+        <div class="pt-2 pb-1">
+            <div class="border-t border-slate-700"></div>
         </div>
-    </div>
-</div>
-<div class="modal fade text-left" id="default" tabindex="-1" aria-labelledby="myModalLabel1" style="display: none;"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel1">Pengembang KuPinjam</h5>
-                <button type="button" class="close rounded-pill" data-bs-dismiss="modal" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-x">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-center align-items-center flex-column">
-                                    <div class="avatar avatar-2xl">
-                                        <img src="http://res.cloudinary.com/dtzcamtgb/image/upload/v1739243312/Project/faces/ennirisy3ale24p5favs.png" alt="Avatar">
-                                    </div>
 
-                                    <h3 class="mt-3">Muhamad Fauzaan</h3>
-                                    <p class="text-small">FullStack Developer</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-center align-items-center flex-column">
-                                    <div class="avatar avatar-2xl">
-                                        <img src="http://res.cloudinary.com/dtzcamtgb/image/upload/v1739243329/Project/faces/iusxh0sixgubpagin6em.jpg" alt="Avatar">
-                                    </div>
+        {{-- Profil --}}
+        <a href="{{ route('profile.show') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                  {{ request()->routeIs('profile.*') ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            Profil Saya
+        </a>
 
-                                    <h3 class="mt-3">Maulana Rivqi</h3>
-                                    <p class="text-small">Innovation Manager</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-center align-items-center flex-column">
-                                    <div class="avatar avatar-2xl">
-                                        <img src="https://res.cloudinary.com/dtzcamtgb/image/upload/v1739243324/Project/faces/b2kmvsx5tksw0se3hbjq.jpg" alt="Avatar">
-                                    </div>
+        {{-- Keamanan Akun --}}
+        <a href="{{ route('accountSecurity') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                  {{ request()->routeIs('accountSecurity') ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            Keamanan Akun
+        </a>
+    </nav>
 
-                                    <h3 class="mt-3">Muhammad Haikan SyahPutra</h3>
-                                    <p class="text-small">UX Designer</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    {{-- Footer sidebar: user info + dark mode + logout --}}
+    <div class="px-4 py-4 border-t border-slate-700 space-y-2">
+        {{-- User info --}}
+        <div class="flex items-center gap-3 px-3 py-2">
+            @if(Auth::user()->avatar)
+                <img src="{{ Storage::url(Auth::user()->avatar) }}"
+                     alt="Avatar"
+                     class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+            @else
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <span class="text-white text-xs font-semibold">
+                        {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
+                    </span>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn" data-bs-dismiss="modal">
-                    <i class="bx bx-x d-block d-sm-none"></i>
-                    <span class="d-none d-sm-block">Close</span>
-                </button>
-                <button type="button" class="btn btn-primary ms-1" data-bs-dismiss="modal">
-                    <i class="bx bx-check d-block d-sm-none"></i>
-                    <span class="d-none d-sm-block">Accept</span>
-                </button>
+            @endif
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-white truncate">{{ Auth::user()->username }}</p>
+                <p class="text-xs text-slate-400 capitalize">{{ Auth::user()->role }}</p>
             </div>
         </div>
+
+        {{-- Dark Mode Toggle --}}
+        <button
+            onclick="toggleDarkMode()"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300
+                   hover:bg-slate-700 hover:text-white transition-colors duration-150"
+        >
+            <svg class="w-5 h-5 flex-shrink-0 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <svg class="w-5 h-5 flex-shrink-0 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <span class="dark:hidden">Mode Gelap</span>
+            <span class="hidden dark:block">Mode Terang</span>
+        </button>
+
+        {{-- Logout --}}
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit"
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300
+                           hover:bg-red-600 hover:text-white transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Keluar
+            </button>
+        </form>
     </div>
-</div>
+</aside>
