@@ -51,16 +51,16 @@
             </div>
         @else
             <div class="table-container">
-                <table class="table-base datatable">
+                <table class="table-base datatable w-full">
                     <thead>
                         <tr>
-                            <th>Karyawan</th>
-                            <th>Kendaraan</th>
-                            <th>Tgl Pinjam</th>
-                            <th>Tgl Diajukan</th>
+                            <th style="width:13%">Karyawan</th>
+                            <th style="width:14%">Kendaraan</th>
+                            <th style="width:9%">Tgl Pinjam</th>
+                            <th style="width:13%">Tgl Diajukan</th>
                             <th>Catatan</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
+                            <th style="width:10%">Status</th>
+                            <th style="width:16%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,7 +90,7 @@
                                         <span class="badge-red">Ditolak</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="whitespace-nowrap">
                                     @if($r->status === 'pending')
                                         <div class="flex items-center gap-2">
                                             <form method="POST"

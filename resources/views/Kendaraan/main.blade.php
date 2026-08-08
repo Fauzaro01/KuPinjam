@@ -44,16 +44,16 @@
     {{-- Tabel --}}
     <div class="card">
         <div class="table-container">
-            <table class="table-base datatable">
+            <table class="table-base datatable w-full">
                 <thead>
                     <tr>
-                        <th>Plat Nomor</th>
-                        <th>Merk</th>
-                        <th>Model</th>
-                        <th>Tahun</th>
-                        <th>Jenis</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+                        <th style="width:14%">Plat Nomor</th>
+                        <th style="width:14%">Merk</th>
+                        <th style="width:14%">Model</th>
+                        <th style="width:8%">Tahun</th>
+                        <th style="width:10%">Jenis</th>
+                        <th style="width:10%">Status</th>
+                        <th style="width:30%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,7 +73,7 @@
                                     <span class="badge-red">Perawatan</span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="whitespace-nowrap">
                                 @if(Auth::user()->hasRole('karyawan') && $kendaraan->status === 'tersedia')
                                     {{-- Karyawan: tombol pinjam membuka modal --}}
                                     <button

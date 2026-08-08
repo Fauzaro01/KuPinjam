@@ -28,14 +28,14 @@
 
     <div class="card">
         <div class="table-container">
-            <table class="table-base datatable">
+            <table class="table-base datatable w-full">
                 <thead>
                     <tr>
-                        <th>Nama</th>
+                        <th style="width:25%">Nama</th>
                         <th>Email</th>
-                        <th>No. Telp</th>
-                        <th>Role</th>
-                        <th>Aksi</th>
+                        <th style="width:14%">No. Telp</th>
+                        <th style="width:10%">Role</th>
+                        <th style="width:14%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,7 +65,7 @@
                                     <span class="badge-gray capitalize">{{ $user->role }}</span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="whitespace-nowrap">
                                 <div class="flex items-center gap-2">
                                     <a href="{{ route('usermanagement.edit', $user->id) }}"
                                        class="btn-secondary text-xs py-1 px-3">Edit</a>

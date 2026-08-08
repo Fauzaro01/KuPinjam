@@ -82,3 +82,23 @@
         @apply badge bg-gray-100 text-gray-800 dark:bg-slate-600 dark:text-gray-200;
     }
 }
+
+/* ─── DataTables Fallback — base layout only ────────────────────────────── */
+/* Override utama ditangani oleh datatables.js (inject ke <head> setelah DT JS) */
+
+.dataTables_wrapper {
+    font-size: 0.875rem;
+}
+
+/* Pastikan wrapper DataTables tidak muncul sebagai block inline */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    display: block;
+}
+
+/* Ensure table full width */
+table.dataTable {
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+

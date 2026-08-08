@@ -33,19 +33,19 @@
 
     <div class="card">
         <div class="table-container">
-            <table class="table-base datatable">
+            <table class="table-base datatable w-full">
                 <thead>
                     <tr>
                         @if(Auth::user()->hasRole('administrator'))
-                            <th>Karyawan</th>
+                            <th style="width:12%">Karyawan</th>
                         @endif
-                        <th>Kendaraan</th>
-                        <th>Tgl Pinjam</th>
-                        <th>Tgl Kembali</th>
+                        <th style="width:15%">Kendaraan</th>
+                        <th style="width:9%">Tgl Pinjam</th>
+                        <th style="width:9%">Tgl Kembali</th>
                         <th>Tujuan</th>
-                        <th>Status Peminjaman</th>
-                        <th>Status Pengembalian</th>
-                        <th>Aksi</th>
+                        <th style="width:10%">Status Peminjaman</th>
+                        <th style="width:14%">Status Pengembalian</th>
+                        <th style="width:12%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -75,7 +75,7 @@
                             </td>
 
                             {{-- ── Kolom Status Pengembalian (Task 34) ── --}}
-                            <td>
+                            <td class="whitespace-nowrap">
                                 @if($p->riwayatPengembalian?->status === 'pending')
                                     <span class="badge-yellow">Menunggu Konfirmasi</span>
                                 @elseif($p->riwayatPengembalian?->status === 'dikonfirmasi')
@@ -112,7 +112,7 @@
                             </td>
 
                             {{-- ── Kolom Aksi (admin only) ── --}}
-                            <td>
+                            <td class="whitespace-nowrap">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     @can('update', $p)
                                         <a href="{{ route('peminjaman.edit', $p) }}"
