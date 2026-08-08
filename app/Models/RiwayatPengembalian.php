@@ -17,11 +17,14 @@ class RiwayatPengembalian extends Model
         'status',
         'tanggal_pengajuan',
         'tanggal_konfirmasi',
+        'kondisi_rating',
+        'kondisi_feedback',
     ];
 
     protected $casts = [
         'tanggal_pengajuan'  => 'datetime',
         'tanggal_konfirmasi' => 'datetime',
+        'kondisi_rating'     => 'integer',
     ];
 
     public function peminjaman(): BelongsTo

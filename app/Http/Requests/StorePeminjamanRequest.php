@@ -20,6 +20,8 @@ class StorePeminjamanRequest extends FormRequest
             'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
             'tujuan'          => 'required|string|max:255',
             'keterangan'      => 'nullable|string',
+            'dokumens'        => 'nullable|array|max:3',
+            'dokumens.*'      => 'file|mimes:pdf,jpg,png,jpeg|max:5120',
         ];
     }
 }

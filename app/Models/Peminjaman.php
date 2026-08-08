@@ -22,6 +22,7 @@ class Peminjaman extends Model
         'status_peminjaman',
         'tujuan',
         'keterangan',
+        'admin_notes',
     ];
 
     protected $casts = [
@@ -31,17 +32,22 @@ class Peminjaman extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id')->withTrashed();
     }
 
     public function kendaraan(): BelongsTo
     {
-        return $this->belongsTo(Kendaraan::class, 'kendaraan_id', 'id');
+        return $this->belongsTo(Kendaraan::class, 'kendaraan_id', 'id')->withTrashed();
     }
 
     public function riwayatPengembalian(): HasOne
     {
         return $this->hasOne(RiwayatPengembalian::class);
+    }
+
+    public function dokumens()
+    {
+        return $this->hasMany(PeminjamanDokumen::class);
     }
 
     public function scopeAktif($query)
@@ -50,9 +56,21 @@ class Peminjaman extends Model
                      ->where('tanggal_kembali', '>=', Carbon::now());
     }
 
+    public function scopeTerlambat($query)
+    {
+        return $query->where('status_peminjaman', 'dipinjam')
+                     ->where('tanggal_kembali', '<', Carbon::now());
+    }
+
     public function scopeSelesai($query)
     {
         return $query->where('status_peminjaman', 'selesai');
+    }
+
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->status_peminjaman === 'dipinjam' && 
+               Carbon::parse($this->attributes['tanggal_kembali'])->isPast();
     }
 
     public function setTanggalPinjamAttribute($value)

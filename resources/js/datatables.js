@@ -148,6 +148,22 @@ document.addEventListener('DOMContentLoaded', function () {
         .dark .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
             background: #1E293B !important;
         }
+
+        /* Prevent default DataTables layout floats from interfering */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            float: none !important;
+            text-align: left !important;
+        }
+        .dataTables_wrapper .dataTables_filter {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            justify-content: flex-end;
+        }
     `;
     document.head.appendChild(style);
 
@@ -155,13 +171,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const tables = document.querySelectorAll('.datatable');
 
     tables.forEach(function (table) {
+        // PERBAIKAN: Lewati inisialisasi jika tabel kosong (memiliki cell colspan di tbody)
+        // untuk mencegah warning "Incorrect column count" (https://datatables.net/tn/18)
+        if (table.querySelector('tbody td[colspan]')) {
+            return;
+        }
+
+        const isServerPaginated = table.hasAttribute('data-server-paginated');
+
         $(table).DataTable({
             responsive: false,
+            paging: !isServerPaginated,
 
-            dom:
-                '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4"lf>' +
-                't' +
-                '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-3"ip>',
+            dom: isServerPaginated
+                ? '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4"f>' +
+                  't'
+                : '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4"lf>' +
+                  't' +
+                  '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-3"ip>',
 
             language: {
                 search:            '',

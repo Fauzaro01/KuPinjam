@@ -10,9 +10,13 @@ use Illuminate\Support\Str;
 
 class UserService
 {
+    public function __construct(
+        protected ActivityLogService $activityLogService
+    ) {}
+
     public function createUser(array $data): User
     {
-        return User::create([
+        $user = User::create([
             'id'       => Str::random(13),
             'username' => $data['username'],
             'email'    => $data['email'],
@@ -20,6 +24,13 @@ class UserService
             'password' => Hash::make($data['password']),
             'role'     => $data['role'],
         ]);
+
+        $this->activityLogService->log(
+            'user_buat',
+            "Pengguna baru dengan username '{$user->username}' ({$user->role}) ditambahkan"
+        );
+
+        return $user;
     }
 
     public function updateUser(User $user, array $data): User
@@ -35,12 +46,23 @@ class UserService
 
         $user->save();
 
+        $this->activityLogService->log(
+            'user_update',
+            "Detail pengguna dengan username '{$user->username}' diperbarui oleh administrator"
+        );
+
         return $user->fresh();
     }
 
     public function deleteUser(User $user): void
     {
+        $username = $user->username;
         $user->delete();
+
+        $this->activityLogService->log(
+            'user_hapus',
+            "Pengguna dengan username '{$username}' dihapus (soft delete)"
+        );
     }
 
     /**
@@ -67,7 +89,8 @@ class UserService
             $email   = trim($data['email'] ?? '');
             $noTelp  = trim($data['no_telp'] ?? '');
 
-            $duplicate = User::where('email', $email)
+            $duplicate = User::withTrashed()
+                             ->where('email', $email)
                              ->orWhere('no_telp', $noTelp)
                              ->exists();
 
@@ -96,6 +119,13 @@ class UserService
 
         fclose($handle);
 
+        if ($imported > 0) {
+            $this->activityLogService->log(
+                'user_bulk_import',
+                "Mengimpor sebanyak {$imported} data user baru secara bulk dari CSV"
+            );
+        }
+
         return [
             'imported'     => $imported,
             'skipped'      => $skipped,
@@ -108,6 +138,11 @@ class UserService
         $user->username = $data['username'];
         $user->no_telp  = $data['no_telp'];
         $user->save();
+
+        $this->activityLogService->log(
+            'profile_update',
+            "Pengguna memperbarui data profil pribadinya"
+        );
 
         return $user->fresh();
     }
@@ -122,6 +157,11 @@ class UserService
         $path = $file->store('avatars', 'public');
         $user->avatar = $path;
         $user->save();
+
+        $this->activityLogService->log(
+            'profile_avatar',
+            "Pengguna mengganti foto profil (avatar) miliknya"
+        );
 
         return $user->fresh();
     }

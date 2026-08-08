@@ -60,7 +60,9 @@ class AuthController extends Controller implements HasMiddleware
             'password' => "required"
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             if (Auth::user()->hasRole('administrator')) {
@@ -79,13 +81,40 @@ class AuthController extends Controller implements HasMiddleware
     public function dashboard() {
         if (Auth::check()) {
             if (Auth::user()->hasRole('administrator')) {
+                $totalKendaraan    = \App\Models\Kendaraan::count();
+                $tersediaKendaraan = \App\Models\Kendaraan::where('status', 'tersedia')->count();
+                $dipinjamKendaraan = \App\Models\Kendaraan::where('status', 'dipinjam')->count();
+                $perawatanKendaraan = \App\Models\Kendaraan::where('status', 'perawatan')->count();
+
+                $totalUsers    = \App\Models\User::count();
+                $karyawanUsers = \App\Models\User::where('role', 'karyawan')->count();
+
+                $aktivPeminjaman   = \App\Models\Peminjaman::where('status_peminjaman', 'dipinjam')->count();
+                $selesaiPeminjaman = \App\Models\Peminjaman::where('status_peminjaman', 'selesai')->count();
+                $terlambatCount    = \App\Models\Peminjaman::where('status_peminjaman', 'dipinjam')
+                    ->where('tanggal_kembali', '<', now())->count();
+
                 $pendingPengembalian = \App\Models\RiwayatPengembalian::where('status', 'pending')->count();
 
+                // Hanya ambil 8 peminjaman aktif terbaru untuk tabel preview
+                $peminjamanAktif = \App\Models\Peminjaman::with(['user', 'kendaraan'])
+                    ->where('status_peminjaman', 'dipinjam')
+                    ->latest()
+                    ->limit(8)
+                    ->get();
+
                 return view('dashboard.main', [
-                    'users'               => \App\Models\User::all(),
-                    'kendaraan'           => \App\Models\Kendaraan::all(),
-                    'peminjamans'         => \App\Models\Peminjaman::with(['user', 'kendaraan'])->get(),
-                    'pendingPengembalian' => $pendingPengembalian,
+                    'totalKendaraan'     => $totalKendaraan,
+                    'tersediaKendaraan'  => $tersediaKendaraan,
+                    'dipinjamKendaraan'  => $dipinjamKendaraan,
+                    'perawatanKendaraan' => $perawatanKendaraan,
+                    'totalUsers'         => $totalUsers,
+                    'karyawanUsers'      => $karyawanUsers,
+                    'aktivPeminjaman'    => $aktivPeminjaman,
+                    'selesaiPeminjaman'  => $selesaiPeminjaman,
+                    'terlambatCount'     => $terlambatCount,
+                    'pendingPengembalian'=> $pendingPengembalian,
+                    'peminjamanAktif'    => $peminjamanAktif,
                 ]);
             }
 
@@ -95,8 +124,12 @@ class AuthController extends Controller implements HasMiddleware
                 ->latest()
                 ->get();
 
+            // Hitung yang terlambat untuk alert
+            $myOverdueCount = $myPeminjamans->filter(fn($p) => $p->is_overdue)->count();
+
             return view('dashboard.main', [
-                'myPeminjamans' => $myPeminjamans,
+                'myPeminjamans'  => $myPeminjamans,
+                'myOverdueCount' => $myOverdueCount,
             ]);
         }
 

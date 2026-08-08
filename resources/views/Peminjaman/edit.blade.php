@@ -87,6 +87,17 @@
                           class="input-field @error('keterangan') border-red-500 @enderror">{{ old('keterangan', $peminjaman->keterangan) }}</textarea>
             </div>
 
+            @if(Auth::user()->hasRole('administrator'))
+                <div>
+                    <label class="block text-sm font-medium text-amber-600 dark:text-amber-400 mb-1.5 font-semibold">
+                        Catatan Internal Admin (Tidak Terlihat oleh Karyawan)
+                    </label>
+                    <textarea name="admin_notes" rows="3"
+                              class="input-field border-amber-300 focus:border-amber-500 @error('admin_notes') border-red-500 @enderror"
+                              placeholder="Tambahkan catatan internal khusus admin di sini...">{{ old('admin_notes', $peminjaman->admin_notes) }}</textarea>
+                </div>
+            @endif
+
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="btn-primary flex items-center gap-2" :disabled="loading">
                     <svg x-show="loading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

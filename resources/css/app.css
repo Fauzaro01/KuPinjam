@@ -102,3 +102,38 @@ table.dataTable {
     border-collapse: collapse !important;
 }
 
+/* ─── Custom Premium Scrollbars ────────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Sidebar scrollbar specific */
+#sidebar nav.overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+}
+#sidebar nav.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+#sidebar nav.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+

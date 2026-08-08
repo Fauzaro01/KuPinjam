@@ -18,8 +18,20 @@ class UpdateUserRequest extends FormRequest
 
         return [
             'username' => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email,' . $userId,
-            'no_telp'  => 'required|string|unique:users,no_telp,' . $userId,
+            'email'    => [
+                'required',
+                'email',
+                \Illuminate\Validation\Rule::unique('users', 'email')
+                    ->ignore($userId)
+                    ->withoutTrashed(),
+            ],
+            'no_telp'  => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('users', 'no_telp')
+                    ->ignore($userId)
+                    ->withoutTrashed(),
+            ],
             'password' => 'nullable|string|min:8',
             'role'     => 'required|in:karyawan,administrator',
         ];

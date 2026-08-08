@@ -13,14 +13,18 @@
         </div>
         <div class="flex items-center gap-3 flex-wrap">
             @if(Auth::user()->hasRole('administrator'))
-                <a href="{{ route('peminjaman.export-csv') }}"
-                   class="btn-secondary flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    Export CSV
-                </a>
+                <form method="GET" action="{{ route('peminjaman.export-csv') }}" class="flex items-center gap-2 flex-wrap">
+                    <input type="date" name="start_date" class="input-field py-1 px-2 text-xs" style="max-width: 145px;" placeholder="Dari Tanggal">
+                    <span class="text-xs text-gray-500">s/d</span>
+                    <input type="date" name="end_date" class="input-field py-1 px-2 text-xs" style="max-width: 145px;" placeholder="Sampai Tanggal">
+                    <button type="submit" class="btn-secondary flex items-center gap-2 text-xs py-1 px-3">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Export CSV
+                    </button>
+                </form>
                 <a href="{{ route('peminjaman.create') }}" class="btn-primary flex items-center gap-2 text-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -33,7 +37,7 @@
 
     <div class="card">
         <div class="table-container">
-            <table class="table-base datatable w-full">
+            <table class="table-base datatable w-full" data-server-paginated="true">
                 <thead>
                     <tr>
                         @if(Auth::user()->hasRole('administrator'))
@@ -65,9 +69,31 @@
                                     {{ $kembali->format('d/m/Y') }}
                                 </span>
                             </td>
-                            <td class="max-w-xs truncate">{{ $p->tujuan }}</td>
                             <td>
-                                @if($p->status_peminjaman === 'dipinjam')
+                                <div class="font-medium text-gray-900 dark:text-white">{{ $p->tujuan }}</div>
+                                @if($p->dokumens->isNotEmpty())
+                                    <div class="mt-1 flex flex-wrap gap-1">
+                                        @foreach($p->dokumens as $dok)
+                                            <a href="{{ Storage::url($dok->file_path) }}" target="_blank"
+                                               class="inline-flex items-center gap-1 text-[10px] bg-slate-100 dark:bg-slate-700 hover:bg-primary/10 text-gray-600 dark:text-gray-300 hover:text-primary px-1.5 py-0.5 rounded transition-colors"
+                                               title="{{ $dok->file_name }}">
+                                                📎 {{ \Illuminate\Support\Str::limit($dok->file_name, 15) }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                
+                                @if(Auth::user()->hasRole('administrator') && $p->admin_notes)
+                                    <div class="mt-1.5 p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-900/30 text-[11px] text-amber-800 dark:text-amber-400">
+                                        <span class="font-semibold uppercase tracking-wider text-[9px] block text-amber-600 dark:text-amber-500">Catatan Internal:</span>
+                                        {{ $p->admin_notes }}
+                                    </div>
+                                @endif
+                            </td>
+                            <td>
+                                @if($p->is_overdue)
+                                    <span class="badge-red">Terlambat</span>
+                                @elseif($p->status_peminjaman === 'dipinjam')
                                     <span class="badge-yellow">Dipinjam</span>
                                 @else
                                     <span class="badge-green">Selesai</span>
@@ -108,12 +134,16 @@
                                     @endcan
                                 @else
                                     <span class="text-xs text-gray-400 dark:text-gray-500">&mdash;</span>
-                                @endif
+                                  @endif
                             </td>
 
-                            {{-- ── Kolom Aksi (admin only) ── --}}
+                            {{-- ── Kolom Aksi ── --}}
                             <td class="whitespace-nowrap">
                                 <div class="flex items-center gap-2 flex-wrap">
+                                    <a href="{{ route('peminjaman.surat-jalan', $p) }}" target="_blank"
+                                       class="btn-primary text-xs py-1 px-2.5 flex items-center gap-1 font-semibold">
+                                        🖨️ Cetak
+                                    </a>
                                     @can('update', $p)
                                         <a href="{{ route('peminjaman.edit', $p) }}"
                                            class="btn-secondary text-xs py-1 px-3">Edit</a>
@@ -134,6 +164,11 @@
                 </tbody>
             </table>
         </div>
+        @if($peminjamans->hasPages())
+            <div class="mt-4">
+                {{ $peminjamans->links() }}
+            </div>
+        @endif
     </div>
 </div>
 @endsection

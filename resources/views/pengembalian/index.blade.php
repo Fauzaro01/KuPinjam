@@ -51,7 +51,7 @@
             </div>
         @else
             <div class="table-container">
-                <table class="table-base datatable w-full">
+                <table class="table-base datatable w-full" data-server-paginated="true">
                     <thead>
                         <tr>
                             <th style="width:13%">Karyawan</th>
@@ -60,7 +60,8 @@
                             <th style="width:13%">Tgl Diajukan</th>
                             <th>Catatan</th>
                             <th style="width:10%">Status</th>
-                            <th style="width:16%">Aksi</th>
+                            <th style="width:8%">Rating</th>
+                            <th style="width:18%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,32 +91,109 @@
                                         <span class="badge-red">Ditolak</span>
                                     @endif
                                 </td>
+                                {{-- Rating Column --}}
+                                <td>
+                                    @if($r->kondisi_rating)
+                                        <div class="flex items-center gap-0.5" title="{{ $r->kondisi_feedback }}">
+                                            @for($s=1;$s<=5;$s++)
+                                                <svg class="w-3.5 h-3.5 {{ $s <= $r->kondisi_rating ? 'text-amber-400' : 'text-gray-300 dark:text-gray-600' }}"
+                                                     fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                </svg>
+                                            @endfor
+                                        </div>
+                                    @else
+                                        <span class="text-xs text-gray-400 dark:text-gray-500">&mdash;</span>
+                                    @endif
+                                </td>
                                 <td class="whitespace-nowrap">
                                     @if($r->status === 'pending')
-                                        <div class="flex items-center gap-2">
-                                            <form method="POST"
-                                                  action="{{ route('pengembalian.konfirmasi', $r) }}"
-                                                  x-data="{ loading: false }"
-                                                  @submit="loading = true"
-                                                  onsubmit="return confirm('Konfirmasi pengembalian ini? Kendaraan akan kembali tersedia.')">
-                                                @csrf @method('PUT')
-                                                <button type="submit"
-                                                        class="btn-success text-xs py-1 px-3"
-                                                        :disabled="loading">
-                                                    Konfirmasi
-                                                </button>
-                                            </form>
+                                        {{-- Rating Modal per baris --}}
+                                        <div x-data="{ open: false, rating: 0, hover: 0, feedback: '' }" class="flex items-center gap-2">
+                                            {{-- Trigger konfirmasi --}}
+                                            <button @click="open = true"
+                                                    class="btn-success text-xs py-1 px-3">
+                                                Konfirmasi
+                                            </button>
+
+                                            {{-- Modal Overlay --}}
+                                            <div x-show="open"
+                                                 x-transition.opacity
+                                                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+                                                 style="display:none"
+                                                 @keydown.escape.window="open=false">
+                                                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5"
+                                                     @click.stop>
+                                                    <div class="flex items-center justify-between">
+                                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Konfirmasi Pengembalian</h3>
+                                                        <button @click="open=false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                        Kendaraan <strong class="text-gray-700 dark:text-gray-200">{{ $r->peminjaman?->kendaraan?->plat_nomor }}</strong>
+                                                        oleh <strong class="text-gray-700 dark:text-gray-200">{{ $r->peminjaman?->user?->username }}</strong>.
+                                                        Nilai kondisi kendaraan setelah dikembalikan.
+                                                    </p>
+
+                                                    {{-- Bintang --}}
+                                                    <div>
+                                                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Kondisi Kendaraan</p>
+                                                        <div class="flex items-center gap-1">
+                                                            @for($s=1;$s<=5;$s++)
+                                                            <button type="button"
+                                                                    @click="rating = {{ $s }}"
+                                                                    @mouseenter="hover = {{ $s }}"
+                                                                    @mouseleave="hover = 0"
+                                                                    class="focus:outline-none">
+                                                                <svg class="w-8 h-8 transition-colors"
+                                                                     :class="(hover || rating) >= {{ $s }} ? 'text-amber-400' : 'text-gray-300 dark:text-gray-600'"
+                                                                     fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                                </svg>
+                                                            </button>
+                                                            @endfor
+                                                            <span class="ml-2 text-sm text-gray-500 dark:text-gray-400"
+                                                                  x-text="['','Sangat Buruk','Buruk','Cukup','Baik','Sangat Baik'][rating] || 'Pilih rating'">
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Feedback --}}
+                                                    <div>
+                                                        <label class="label-base">Catatan Kondisi <span class="text-gray-400 font-normal">(opsional)</span></label>
+                                                        <textarea x-model="feedback" rows="3"
+                                                                  placeholder="Contoh: Bumper sedikit lecet, perlu perawatan ban..."
+                                                                  class="input-base mt-1"></textarea>
+                                                    </div>
+
+                                                    {{-- Submit --}}
+                                                    <form method="POST" action="{{ route('pengembalian.konfirmasi', $r) }}">
+                                                        @csrf @method('PUT')
+                                                        <input type="hidden" name="kondisi_rating" :value="rating">
+                                                        <input type="hidden" name="kondisi_feedback" :value="feedback">
+                                                        <div class="flex justify-end gap-3">
+                                                            <button type="button" @click="open=false" class="btn-secondary text-sm">Batal</button>
+                                                            <button type="submit"
+                                                                    :disabled="rating === 0"
+                                                                    class="btn-success text-sm"
+                                                                    :class="rating === 0 ? 'opacity-50 cursor-not-allowed' : ''">
+                                                                Konfirmasi & Simpan
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            {{-- Tombol Tolak --}}
                                             <form method="POST"
                                                   action="{{ route('pengembalian.tolak', $r) }}"
-                                                  x-data="{ loading: false }"
-                                                  @submit="loading = true"
                                                   onsubmit="return confirm('Tolak pengajuan pengembalian ini?')">
                                                 @csrf @method('PUT')
-                                                <button type="submit"
-                                                        class="btn-danger text-xs py-1 px-3"
-                                                        :disabled="loading">
-                                                    Tolak
-                                                </button>
+                                                <button type="submit" class="btn-danger text-xs py-1 px-3">Tolak</button>
                                             </form>
                                         </div>
                                     @else
@@ -133,6 +211,11 @@
                     </tbody>
                 </table>
             </div>
+            @if($riwayats->hasPages())
+                <div class="mt-4 px-6 py-4 border-t border-gray-200 dark:border-slate-700">
+                    {{ $riwayats->links() }}
+                </div>
+            @endif
         @endif
     </div>
 </div>

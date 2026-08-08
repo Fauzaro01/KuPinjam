@@ -16,8 +16,17 @@ class UpdateProfileRequest extends FormRequest
         $userId = $this->user()->id;
 
         return [
-            'username' => "required|string|max:255|unique:users,username,{$userId},id",
-            'no_telp'  => "required|string|unique:users,no_telp,{$userId},id",
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('users', 'username')->ignore($userId)->withoutTrashed(),
+            ],
+            'no_telp'  => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('users', 'no_telp')->ignore($userId)->withoutTrashed(),
+            ],
         ];
     }
 }

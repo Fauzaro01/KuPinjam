@@ -9,3 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('peminjaman:cek-status')->everyMinute();
+
+// Auto-reminder: kirim notifikasi H-1 dan pengingat keterlambatan setiap hari pukul 08:00
+Schedule::command('peminjaman:send-reminders')->dailyAt('08:00')->withoutOverlapping();

@@ -14,7 +14,12 @@ class StoreKendaraanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'plat_nomor'      => 'required|string|max:20|unique:kendaraans,plat_nomor',
+            'plat_nomor'      => [
+                'required',
+                'string',
+                'max:20',
+                \Illuminate\Validation\Rule::unique('kendaraans', 'plat_nomor')->withoutTrashed(),
+            ],
             'merk'            => 'required|string|max:50',
             'model'           => 'required|string|max:50',
             'tahun'           => 'required|integer|between:1900,' . date('Y'),

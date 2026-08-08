@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRiwayatPengembalianRequest;
 use App\Models\Peminjaman;
 use App\Models\RiwayatPengembalian;
 use App\Services\PengembalianService;
+use Illuminate\Http\Request;
 
 class PengembalianController extends Controller
 {
@@ -53,7 +54,7 @@ class PengembalianController extends Controller
             $query->where('status', $currentStatus);
         }
 
-        $riwayats = $query->get();
+        $riwayats = $query->paginate(15);
 
         return view('pengembalian.index', compact('riwayats', 'currentStatus'));
     }
@@ -61,12 +62,22 @@ class PengembalianController extends Controller
     /**
      * Admin mengkonfirmasi pengajuan pengembalian.
      */
-    public function konfirmasi(RiwayatPengembalian $riwayat)
+    public function konfirmasi(Request $request, RiwayatPengembalian $riwayat)
     {
         $this->authorize('konfirmasi', $riwayat);
 
+        $validated = $request->validate([
+            'kondisi_rating'   => 'nullable|integer|min:1|max:5',
+            'kondisi_feedback' => 'nullable|string|max:500',
+        ]);
+
         try {
             $this->pengembalianService->konfirmasiPengembalian($riwayat);
+            // Simpan rating & feedback setelah konfirmasi berhasil
+            $riwayat->update([
+                'kondisi_rating'   => $validated['kondisi_rating'] ?? null,
+                'kondisi_feedback' => $validated['kondisi_feedback'] ?? null,
+            ]);
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Gagal mengkonfirmasi pengembalian. Silakan coba lagi.');

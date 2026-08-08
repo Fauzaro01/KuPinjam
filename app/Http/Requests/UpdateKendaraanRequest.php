@@ -16,7 +16,14 @@ class UpdateKendaraanRequest extends FormRequest
         $kendaraanId = $this->route('kendaraan')?->id ?? $this->route('kendaraan');
 
         return [
-            'plat_nomor'      => 'required|string|max:20|unique:kendaraans,plat_nomor,' . $kendaraanId,
+            'plat_nomor'      => [
+                'required',
+                'string',
+                'max:20',
+                \Illuminate\Validation\Rule::unique('kendaraans', 'plat_nomor')
+                    ->ignore($kendaraanId)
+                    ->withoutTrashed(),
+            ],
             'merk'            => 'required|string|max:50',
             'model'           => 'required|string|max:50',
             'tahun'           => 'required|integer|between:1900,' . date('Y'),

@@ -15,8 +15,16 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'username' => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'no_telp'  => 'required|string|unique:users,no_telp',
+            'email'    => [
+                'required',
+                'email',
+                \Illuminate\Validation\Rule::unique('users', 'email')->withoutTrashed(),
+            ],
+            'no_telp'  => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('users', 'no_telp')->withoutTrashed(),
+            ],
             'password' => 'required|string|min:8',
             'role'     => 'required|in:karyawan,administrator',
         ];

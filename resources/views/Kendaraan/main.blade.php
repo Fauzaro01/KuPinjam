@@ -31,20 +31,38 @@
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Kendaraan</h1>
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Daftar kendaraan perusahaan</p>
         </div>
-        @can('create', \App\Models\Kendaraan::class)
-            <a href="{{ route('kendaraan.create') }}" class="btn-primary flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Tambah Kendaraan
-            </a>
-        @endcan
+        @if(!$showTrashed)
+            @can('create', \App\Models\Kendaraan::class)
+                <a href="{{ route('kendaraan.create') }}" class="btn-primary flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Tambah Kendaraan
+                </a>
+            @endcan
+        @endif
     </div>
+
+    {{-- Tab Filter Aktif / Dihapus untuk Admin --}}
+    @if(Auth::user()->hasRole('administrator'))
+        <div class="flex items-center gap-2 border-b border-gray-200 dark:border-slate-700">
+            <a href="{{ route('kendaraan.index') }}"
+               class="pb-2 px-1 text-sm font-medium border-b-2 transition-colors
+                      {{ !$showTrashed ? 'border-primary text-primary' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }}">
+                Kendaraan Aktif
+            </a>
+            <a href="{{ route('kendaraan.index', ['trashed' => 1]) }}"
+               class="pb-2 px-1 text-sm font-medium border-b-2 transition-colors
+                      {{ $showTrashed ? 'border-red-500 text-red-500' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }}">
+                Dihapus
+            </a>
+        </div>
+    @endif
 
     {{-- Tabel --}}
     <div class="card">
         <div class="table-container">
-            <table class="table-base datatable w-full">
+            <table class="table-base datatable w-full" data-server-paginated="true">
                 <thead>
                     <tr>
                         <th style="width:14%">Plat Nomor</th>
@@ -58,8 +76,13 @@
                 </thead>
                 <tbody>
                     @forelse($kendaraans as $kendaraan)
-                        <tr>
-                            <td class="font-semibold">{{ $kendaraan->plat_nomor }}</td>
+                        <tr class="{{ $showTrashed ? 'opacity-70' : '' }}">
+                            <td class="font-semibold">
+                                {{ $kendaraan->plat_nomor }}
+                                @if($showTrashed)
+                                    <span class="badge-red text-xs ml-1">Dihapus</span>
+                                @endif
+                            </td>
                             <td>{{ $kendaraan->merk }}</td>
                             <td>{{ $kendaraan->model }}</td>
                             <td>{{ $kendaraan->tahun }}</td>
@@ -74,7 +97,18 @@
                                 @endif
                             </td>
                             <td class="whitespace-nowrap">
-                                @if(Auth::user()->hasRole('karyawan') && $kendaraan->status === 'tersedia')
+                                @if($showTrashed)
+                                    {{-- Restore kendaraan --}}
+                                    <form method="POST"
+                                          action="{{ route('kendaraan.restore', $kendaraan->id) }}"
+                                          onsubmit="return confirm('Pulihkan kendaraan ini?')">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn-secondary text-xs py-1 px-3 text-green-700 border-green-400 hover:bg-green-50 dark:text-green-400 dark:border-green-600 dark:hover:bg-green-900/30">
+                                            Pulihkan
+                                        </button>
+                                    </form>
+                                @elseif(Auth::user()->hasRole('karyawan') && $kendaraan->status === 'tersedia')
                                     {{-- Karyawan: tombol pinjam membuka modal --}}
                                     <button
                                         type="button"
@@ -106,12 +140,19 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-8 text-gray-400">Belum ada data kendaraan.</td>
+                            <td colspan="7" class="text-center py-8 text-gray-400">
+                                {{ $showTrashed ? 'Tidak ada kendaraan yang dihapus.' : 'Belum ada data kendaraan.' }}
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
+        @if($kendaraans->hasPages())
+            <div class="mt-4">
+                {{ $kendaraans->appends(request()->query())->links() }}
+            </div>
+        @endif
     </div>
 
     {{-- ====================================================
@@ -163,6 +204,7 @@
             <form
                 method="POST"
                 action="{{ route('peminjaman.pinjam') }}"
+                enctype="multipart/form-data"
                 x-data="{ loading: false }"
                 @submit="loading = true"
             >
@@ -225,6 +267,22 @@
                             rows="3"
                             class="input-field resize-none"
                             placeholder="Catatan tambahan..."></textarea>
+                    </div>
+
+                    {{-- Upload Dokumen Lampiran (opsional) --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                            Upload Dokumen / Surat Tugas / Bukti Foto
+                            <span class="text-gray-400 font-normal">(opsional, maks 3 file, maks 5MB/file)</span>
+                        </label>
+                        <input
+                            type="file"
+                            name="dokumens[]"
+                            multiple
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            class="input-field py-1 text-sm bg-white dark:bg-slate-700"
+                        />
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Format: PDF, JPG, PNG, JPEG</p>
                     </div>
                 </div>
 

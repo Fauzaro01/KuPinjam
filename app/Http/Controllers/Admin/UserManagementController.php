@@ -16,12 +16,19 @@ class UserManagementController extends Controller
         protected UserService $userService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', User::class);
 
-        $users = User::all();
-        return view('admin.usermanagement.index', compact('users'));
+        $showTrashed = $request->boolean('trashed');
+
+        if ($showTrashed) {
+            $users = User::onlyTrashed()->latest()->paginate(15);
+        } else {
+            $users = User::latest()->paginate(15);
+        }
+
+        return view('admin.usermanagement.index', compact('users', 'showTrashed'));
     }
 
     public function create()
@@ -69,6 +76,20 @@ class UserManagementController extends Controller
 
         return redirect()->route('usermanagement.index')
             ->with('success', 'User berhasil dihapus.');
+    }
+
+    /**
+     * Restore user yang di-soft-delete (admin only).
+     */
+    public function restore($id)
+    {
+        $this->authorize('create', User::class);
+
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()->route('usermanagement.index')
+            ->with('success', "User '{$user->username}' berhasil dipulihkan.");
     }
 
     public function downloadcsvuser()

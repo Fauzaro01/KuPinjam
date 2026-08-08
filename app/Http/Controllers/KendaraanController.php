@@ -20,19 +20,26 @@ class KendaraanController extends Controller implements HasMiddleware
         return ['auth'];
     }
 
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
         $this->authorize('viewAny', Kendaraan::class);
 
         if (Auth::user()->hasRole('karyawan')) {
             return view('kendaraan.main', [
-                'kendaraans' => Kendaraan::where('status', 'tersedia')->get(),
+                'kendaraans' => Kendaraan::where('status', 'tersedia')->paginate(12),
+                'showTrashed' => false
             ]);
         }
 
-        return view('kendaraan.main', [
-            'kendaraans' => Kendaraan::all(),
-        ]);
+        $showTrashed = $request->boolean('trashed');
+
+        if ($showTrashed) {
+            $kendaraans = Kendaraan::onlyTrashed()->paginate(12);
+        } else {
+            $kendaraans = Kendaraan::paginate(12);
+        }
+
+        return view('kendaraan.main', compact('kendaraans', 'showTrashed'));
     }
 
     public function create()
@@ -77,5 +84,19 @@ class KendaraanController extends Controller implements HasMiddleware
 
         return redirect()->route('kendaraan.index')
             ->with('success', 'Kendaraan berhasil dihapus.');
+    }
+
+    /**
+     * Restore kendaraan yang di-soft-delete (admin only).
+     */
+    public function restore(int $id)
+    {
+        $this->authorize('create', Kendaraan::class);
+
+        $kendaraan = Kendaraan::withTrashed()->findOrFail($id);
+        $kendaraan->restore();
+
+        return redirect()->route('kendaraan.index')
+            ->with('success', 'Kendaraan berhasil dipulihkan.');
     }
 }

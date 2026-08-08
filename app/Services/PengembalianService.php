@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class PengembalianService
 {
+    public function __construct(
+        protected ActivityLogService $activityLogService,
+        protected NotificationService $notificationService
+    ) {}
+
     /**
      * Ajukan pengembalian kendaraan.
      * Cek tidak ada pengajuan pending, lalu buat RiwayatPengembalian baru.
@@ -26,13 +31,31 @@ class PengembalianService
             );
         }
 
-        return RiwayatPengembalian::create([
+        $riwayat = RiwayatPengembalian::create([
             'peminjaman_id'        => $peminjaman->id,
             'catatan_pengembalian' => $catatan,
             'status'               => 'pending',
             'tanggal_pengajuan'    => now(),
             'tanggal_konfirmasi'   => null,
         ]);
+
+        // Log Aktivitas
+        $this->activityLogService->log(
+            'pengembalian_ajukan',
+            "Karyawan '{$peminjaman->user->username}' mengajukan pengembalian kendaraan '{$peminjaman->kendaraan->plat_nomor}'"
+        );
+
+        // Notifikasi ke seluruh administrator
+        $admins = \App\Models\User::where('role', 'administrator')->get();
+        foreach ($admins as $admin) {
+            $this->notificationService->sendNotification(
+                $admin->id,
+                'Pengajuan Pengembalian Baru',
+                "Karyawan '{$peminjaman->user->username}' telah mengajukan pengembalian kendaraan '{$peminjaman->kendaraan->plat_nomor}'."
+            );
+        }
+
+        return $riwayat;
     }
 
     /**
@@ -54,6 +77,19 @@ class PengembalianService
             $riwayat->peminjaman->kendaraan->update([
                 'status' => 'tersedia',
             ]);
+
+            // Log Aktivitas
+            $this->activityLogService->log(
+                'pengembalian_konfirmasi',
+                "Admin menyetujui pengembalian kendaraan '{$riwayat->peminjaman->kendaraan->plat_nomor}'"
+            );
+
+            // Notifikasi ke karyawan peminjam
+            $this->notificationService->sendNotification(
+                $riwayat->peminjaman->user_id,
+                'Pengembalian Disetujui',
+                "Pengembalian kendaraan '{$riwayat->peminjaman->kendaraan->plat_nomor}' telah dikonfirmasi oleh Admin."
+            );
         });
     }
 
@@ -66,5 +102,18 @@ class PengembalianService
         $riwayat->update([
             'status' => 'ditolak',
         ]);
+
+        // Log Aktivitas
+        $this->activityLogService->log(
+            'pengembalian_tolak',
+            "Admin menolak pengembalian kendaraan '{$riwayat->peminjaman->kendaraan->plat_nomor}'"
+        );
+
+        // Notifikasi ke karyawan peminjam
+        $this->notificationService->sendNotification(
+            $riwayat->peminjaman->user_id,
+            'Pengembalian Ditolak',
+            "Pengajuan pengembalian kendaraan '{$riwayat->peminjaman->kendaraan->plat_nomor}' ditolak oleh Admin."
+        );
     }
 }

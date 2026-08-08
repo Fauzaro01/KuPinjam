@@ -69,6 +69,14 @@
                            required>
                 </div>
 
+                <div class="flex items-center">
+                    <input id="remember" name="remember" type="checkbox"
+                           class="h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-slate-600 rounded">
+                    <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                        Ingat saya
+                    </label>
+                </div>
+
                 <button type="submit" class="w-full btn-primary py-2.5 text-sm flex items-center justify-center gap-2"
                         :disabled="loading">
                     <svg x-show="loading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

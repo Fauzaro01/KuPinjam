@@ -25,7 +25,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('peminjaman.store') }}" class="space-y-5"
+        <form method="POST" action="{{ route('peminjaman.store') }}" enctype="multipart/form-data" class="space-y-5"
               x-data="{ loading: false }" @submit="loading = true">
             @csrf
 
@@ -80,8 +80,17 @@
                     Keterangan <span class="text-gray-400 font-normal">(opsional)</span>
                 </label>
                 <textarea name="keterangan" rows="3"
-                          class="input-field @error('keterangan') border-red-500 @enderror"
-                          placeholder="Catatan tambahan...">{{ old('keterangan') }}</textarea>
+                           class="input-field @error('keterangan') border-red-500 @enderror"
+                           placeholder="Catatan tambahan...">{{ old('keterangan') }}</textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Upload Dokumen / Surat Tugas / Bukti Foto <span class="text-gray-400 font-normal">(opsional, maks 3 file, maks 5MB/file)</span>
+                </label>
+                <input type="file" name="dokumens[]" multiple accept=".pdf,.jpg,.jpeg,.png"
+                       class="input-field py-1.5 text-sm bg-white dark:bg-slate-700" />
+                <p class="text-xs text-gray-400 mt-1">Format: PDF, JPG, PNG, JPEG</p>
             </div>
 
             <div class="flex gap-3 pt-2">
